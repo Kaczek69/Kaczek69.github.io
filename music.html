@@ -13,7 +13,7 @@
         }
         h1 {
             font-size: 50px;
-            color: white; /* Ciulofon jest teraz biały */
+            color: white;
         }
 
         @keyframes rainbow-text {
@@ -119,8 +119,8 @@
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
-            background-color: #FFEB3B; /* Żółty kolor */
-            color: black; /* Czarny tekst */
+            background-color: #FFEB3B;
+            color: black;
             border: none;
             border-radius: 5px;
             transition: background-color 0.3s;
@@ -131,7 +131,7 @@
         }
 
         #colorful-toggle {
-            animation: rainbow-text 2s linear infinite; /* Tęcza nad Sosnowcem */
+            animation: rainbow-text 2s linear infinite;
         }
     </style>
 </head>
@@ -140,7 +140,7 @@
     <h1>Ciulofon™ 1.0.2</h1>
 
     <div class="controls-container">
-        <h3 id="colorful-toggle">wiocha edition</h3> <!-- Tęcza nad Sosnowcem będzie się świecić jak tęcza -->
+        <h3 id="colorful-toggle">wiocha edition</h3>
 
         <!-- Kolorowanie wizualizera -->
         <div class="color-option">
@@ -261,48 +261,4 @@
         });
 
         // Funkcja do odtwarzania wybranego utworu
-        songList.addEventListener('click', function(event) {
-            const clickedSong = event.target;
-            if (clickedSong.tagName.toLowerCase() === 'li') {
-                const songSrc = clickedSong.getAttribute('data-src');
-                audioPlayer.src = songSrc;
-                audioPlayer.play();
-                audioContext.resume().then(() => {
-                    const source = audioContext.createMediaElementSource(audioPlayer);
-                    source.connect(analyser);
-                    analyser.connect(audioContext.destination);
-                    drawVisualizer();
-                });
-            }
-        });
-
-        // Zmiana ustawienia opcji "Colorful"
-        document.getElementById('colorful-toggle').addEventListener('change', function() {
-            isColorful = this.checked;
-        });
-
-        // Funkcja do odtwarzania losowego utworu
-        randomSongBtn.addEventListener('click', () => {
-            const songs = Array.from(songList.getElementsByTagName('li'));
-            const randomSong = songs[Math.floor(Math.random() * songs.length)];
-            const songSrc = randomSong.getAttribute('data-src');
-            audioPlayer.src = songSrc;
-            audioPlayer.play();
-        });
-
-        // Funkcja do włączenia losowego utworu po zakończeniu obecnego
-        audioPlayer.addEventListener('ended', () => {
-            const songs = Array.from(songList.getElementsByTagName('li'));
-            const randomSong = songs[Math.floor(Math.random() * songs.length)];
-            const songSrc = randomSong.getAttribute('data-src');
-            audioPlayer.src = songSrc;
-            audioPlayer.play();
-        });
-
-        // Dostosowanie rozmiaru canvas
-        canvas.width = window.innerWidth - 40;
-        canvas.height = 300;
-    </script>
-
-</body>
-</html>
+        songList.addEventListener('click', function
