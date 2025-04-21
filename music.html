@@ -197,4 +197,112 @@
         const audioPlayer = document.getElementById('audio-player');
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
-        const randomSongBtn = document.getElementById
+        const randomSongBtn = document.getElementById('random-song-btn');
+        
+        // Konfiguracja Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // Zmienna kontrolująca efekt "Colorful"
+        let isColorful = false;
+
+        // Funkcja do losowania kolorów
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Funkcja do rysowania wizualizera
+        function drawVisualizer() {
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
+
+                let color;
+                if (isColorful) {
+                    color = getRandomColor(); // Losowy kolor w trybie "Colorful"
+                } else {
+                    const selectedColor = document.getElementById('color-select').value;
+                    color = selectedColor === 'random' ? getRandomColor() : selectedColor;
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+
+            requestAnimationFrame(drawVisualizer);
+        }
+
+        // Funkcja do filtrowania utworów
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const songs = songList.getElementsByTagName('li');
+            Array.from(songs).forEach(song => {
+                const songTitle = song.textContent.toLowerCase();
+                if (songTitle.includes(searchTerm)) {
+                    song.style.display = '';
+                } else {
+                    song.style.display = 'none';
+                }
+            });
+        });
+
+        // Funkcja do odtwarzania wybranego utworu
+        songList.addEventListener('click', function(event) {
+            const clickedSong = event.target;
+            if (clickedSong.tagName.toLowerCase() === 'li') {
+                const songSrc = clickedSong.getAttribute('data-src');
+                audioPlayer.src = songSrc;
+                audioPlayer.play();
+                audioContext.resume().then(() => {
+                    const source = audioContext.createMediaElementSource(audioPlayer);
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    drawVisualizer();
+                });
+            }
+        });
+
+        // Zmiana ustawienia opcji "Colorful"
+        document.getElementById('colorful-toggle').addEventListener('change', function() {
+            isColorful = this.checked;
+        });
+
+        // Funkcja do odtwarzania losowego utworu
+        randomSongBtn.addEventListener('click', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
+        // Funkcja do włączenia losowego utworu po zakończeniu obecnego
+        audioPlayer.addEventListener('ended', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
+        // Dostosowanie rozmiaru canvas
+        canvas.width = window.innerWidth - 40;
+        canvas.height = 300;
+    </script>
+
+</body>
+</html>
