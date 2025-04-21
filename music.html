@@ -290,6 +290,15 @@
             audioPlayer.play();
         });
 
+        // Funkcja do włączenia losowego utworu po zakończeniu obecnego
+        audioPlayer.addEventListener('ended', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
         // Dostosowanie rozmiaru canvas
         canvas.width = window.innerWidth - 40;
         canvas.height = 300;
