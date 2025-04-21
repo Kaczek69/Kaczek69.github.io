@@ -2,53 +2,137 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Strona Główna - Sosnowiecki Kfelek</title>
+  <title>Logowanie</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background-color: #141414;
       margin: 0;
-      padding: 0;
+      overflow: hidden;
+      height: 100vh;
+    }
+
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      z-index: -1;
+    }
+
+    .square {
+      position: absolute;
+      opacity: 0.3;
+      animation: float 20s linear infinite;
+    }
+
+    @keyframes float {
+      0% {
+        transform: translateY(0) translateX(0);
+      }
+      50% {
+        transform: translateY(-50px) translateX(50px);
+      }
+      100% {
+        transform: translateY(0) translateX(0);
+      }
+    }
+
+    .login-container {
+      background-color: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      z-index: 1;
       text-align: center;
     }
-    header {
-      background-color: #222;
-      color: white;
-      padding: 2em 0;
+
+    input[type="password"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-align: center;
     }
-    main {
-      padding: 2em;
+
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: yellow;
+      color: black;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
     }
-    a.button {
-      display: inline-block;
-      margin: 1em;
-      padding: 1em 2em;
-      background-color: #2c3e50;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 1.2em;
-      transition: background-color 0.3s;
+
+    button:hover {
+      background-color: gold;
     }
-    a.button:hover {
-      background-color: #34495e;
+
+    .error {
+      color: red;
+      display: none;
+      margin-bottom: 10px;
+    }
+
+    .centered {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
     }
   </style>
 </head>
 <body>
-  <header>
-    <h1>Witamy w Sosnowcu!</h1>
-    <p>Oficjalna strona gier z Sosnowca</p>
-  </header>
-  <main>
-    <p>Odkryj sosnowieckie klasyki w jednym miejscu:</p>
-    <a href="games.html" class="button">Gry z Sosnowca</a>
-    <a href="music.html" class="button">Muzyka z Sosnowca</a>
-    <a href="games.html" class="button">404</a>
-    <p>Odkryj sosnowieckie klasyki w jednym miejscu:</p>
-    <a href="games.html" class="button">404</a>
-    <a href="games.html" class="button">404</a>
-    <a href="games.html" class="button">404</a>
-  </main>
+  <audio autoplay loop>
+    <source src="music/wodzionka.mp3" type="audio/mpeg">
+    Twoja przeglądarka nie obsługuje odtwarzacza audio.
+  </audio>
+
+  <div class="background" id="background"></div>
+
+  <div class="centered">
+    <div class="login-container">
+      <h2>Witamy w Sosnowcu</h2>
+      <div class="error" id="error">Nieprawidłowe hasło.</div>
+      <input type="password" id="password" placeholder="Wprowadź hasło">
+      <button onclick="checkPassword()">Zaloguj</button>
+    </div>
+  </div>
+
+  <script>
+    function checkPassword() {
+      const password = document.getElementById("password").value;
+      const error = document.getElementById("error");
+
+      if (password === "kowalsko2137") {
+        window.location.href = "home.html";
+      } else {
+        error.style.display = "block";
+      }
+    }
+
+    function createSquares() {
+      const background = document.getElementById("background");
+      for (let i = 0; i < 80; i++) {
+        const square = document.createElement("div");
+        square.className = "square";
+        square.style.top = `${Math.random() * 100}vh`;
+        square.style.left = `${Math.random() * 100}vw`;
+        square.style.backgroundColor = Math.random() > 0.5 ? "yellow" : "#111";
+        square.style.animationDuration = `${10 + Math.random() * 20}s`;
+        const size = `${30 + Math.random() * 70}px`;
+        square.style.width = size;
+        square.style.height = size;
+        background.appendChild(square);
+      }
+    }
+
+    createSquares();
+  </script>
 </body>
 </html>
