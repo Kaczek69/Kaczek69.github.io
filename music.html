@@ -39,12 +39,25 @@
             margin-top: 20px;
             width: 100%;
             max-width: 600px;
+            border-radius: 10px;
+        }
+        #visualizer {
+            margin-top: 30px;
+            width: 100%;
+            height: 200px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
         }
     </style>
 </head>
 <body>
 
     <h1>ciulofon muzyczny</h1>
+    <audio id="audio-player" controls>
+        Twoja przeglądarka nie wspiera elementu audio.
+    </audio>
+
     <input type="text" id="search" placeholder="Wyszukaj utwór...">
 
     <ul id="song-list" class="song-list">
@@ -55,15 +68,41 @@
         <li data-src="music/nowy_utwor3.mp3">Nowy Utwór 3</li>
     </ul>
 
-    <audio id="audio-player" controls>
-        Twoja przeglądarka nie wspiera elementu audio.
-    </audio>
+    <!-- Wizualizer dźwięku -->
+    <canvas id="visualizer"></canvas>
 
     <script>
         const searchInput = document.getElementById('search');
         const songList = document.getElementById('song-list');
         const audioPlayer = document.getElementById('audio-player');
-        
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+
+        // Konfiguracja Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // Funkcja do rysowania wizualizera
+        function drawVisualizer() {
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
+                ctx.fillStyle = 'rgb(' + (barHeight + 100) + ',50,50)';
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+
+            requestAnimationFrame(drawVisualizer);
+        }
+
         // Funkcja do filtrowania utworów
         searchInput.addEventListener('input', function() {
             const searchTerm = searchInput.value.toLowerCase();
@@ -85,8 +124,19 @@
                 const songSrc = clickedSong.getAttribute('data-src');
                 audioPlayer.src = songSrc;
                 audioPlayer.play();
+                audioContext.resume().then(() => {
+                    const source = audioContext.createMediaElementSource(audioPlayer);
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    drawVisualizer();
+                });
             }
         });
+
+        // Dostosowanie rozmiaru canvas
+        canvas.width = window.innerWidth - 40;
+        canvas.height = 200;
+
     </script>
 
 </body>
