@@ -9,6 +9,7 @@
       margin: 0;
       overflow: hidden;
       height: 100vh;
+      background-color: #141414;
     }
 
     .background {
@@ -40,12 +41,16 @@
     }
 
     .login-container {
-      background-color: white;
+      background-color: #161616;
       padding: 20px 30px;
       border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
       z-index: 1;
       text-align: center;
+    }
+
+    .login-container h2 {
+      color: white;
     }
 
     input[type="password"] {
@@ -53,9 +58,18 @@
       padding: 10px;
       margin-top: 10px;
       margin-bottom: 20px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: white;
       text-align: center;
+      font-size: 16px;
+      border-bottom: 1px solid white;
+      outline: none;
+    }
+
+    input[type="password"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
     }
 
     button {
@@ -98,8 +112,8 @@
   <div class="centered">
     <div class="login-container">
       <h2>Witamy w Sosnowcu</h2>
-      <div class="error" id="error">Nieprawidłowe hasło.</div>
-      <input type="password" id="password" placeholder="Wprowadź hasło">
+      <div class="error" id="error">Wykryto gorola.</div>
+      <input type="password" id="password" placeholder="rolada">
       <button onclick="checkPassword()">Zaloguj</button>
     </div>
   </div>
@@ -123,7 +137,7 @@
         square.className = "square";
         square.style.top = `${Math.random() * 100}vh`;
         square.style.left = `${Math.random() * 100}vw`;
-        square.style.backgroundColor = Math.random() > 0.5 ? "yellow" : "#111";
+        square.style.backgroundColor = "yellow";
         square.style.animationDuration = `${10 + Math.random() * 20}s`;
         const size = `${30 + Math.random() * 70}px`;
         square.style.width = size;
