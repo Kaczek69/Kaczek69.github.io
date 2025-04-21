@@ -102,7 +102,7 @@
   </style>
 </head>
 <body>
-  <audio autoplay loop>
+  <audio id="bg-audio" loop>
     <source src="music/wodzionka.mp3" type="audio/mpeg">
     Twoja przeglądarka nie obsługuje odtwarzacza audio.
   </audio>
@@ -146,7 +146,17 @@
       }
     }
 
+    function enableAudioOnInteraction() {
+      const audio = document.getElementById("bg-audio");
+      const playAudio = () => {
+        audio.play().catch(e => console.log("Odtwarzanie zablokowane przez przeglądarkę."));
+        document.removeEventListener("click", playAudio);
+      };
+      document.addEventListener("click", playAudio);
+    }
+
     createSquares();
+    enableAudioOnInteraction();
   </script>
 </body>
 </html>
