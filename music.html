@@ -13,7 +13,7 @@
         }
         h1 {
             font-size: 50px;
-            animation: rainbow-text 2s linear infinite;
+            color: white; /* Ciulofon jest teraz biały */
         }
 
         @keyframes rainbow-text {
@@ -114,6 +114,25 @@
             align-items: center;
             flex-direction: column;
         }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #FFEB3B; /* Żółty kolor */
+            color: black; /* Czarny tekst */
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #FBC02D;
+        }
+
+        #colorful-toggle {
+            animation: rainbow-text 2s linear infinite; /* Tęcza nad Sosnowcem */
+        }
     </style>
 </head>
 <body>
@@ -121,7 +140,7 @@
     <h1>Ciulofon™ 1.0.2</h1>
 
     <div class="controls-container">
-        <h3>wiocha edition</h3>
+        <h3 id="colorful-toggle">wiocha edition</h3> <!-- Tęcza nad Sosnowcem będzie się świecić jak tęcza -->
 
         <!-- Kolorowanie wizualizera -->
         <div class="color-option">
@@ -145,6 +164,9 @@
             <label for="colorful-toggle">tęcza nad sosnowcem:</label>
             <input type="checkbox" id="colorful-toggle">
         </div>
+
+        <!-- Przycisk do odtwarzania losowego utworu -->
+        <button class="button" id="random-song-btn">Odtwórz losowy utwór</button>
     </div>
 
     <div class="container">
@@ -159,13 +181,13 @@
 
             <input type="text" id="search" placeholder="Wyszukaj utwór...">
 
-             <ul id="song-list" class="song-list">
-        <li data-src="music/maupa.mp3">Maupa</li>
-        <li data-src="music/cipatrol.mp3">Cipatrol</li>
-        <li data-src="music/Queen of Wheels.mp3">Babka queen</li>
-        <li data-src="music/Grand Caravan.mp3">ciulstewko</li>
-        <li data-src="music/Caterina Valente - Tschau Tschau Bambina.flac">Caterina Valente - Tschau Tschau Bambina</li>
-    </ul>
+            <ul id="song-list" class="song-list">
+                <li data-src="music/maupa.mp3">Maupa</li>
+                <li data-src="music/cipatrol.mp3">Cipatrol</li>
+                <li data-src="music/Queen of Wheels.mp3">Babka queen</li>
+                <li data-src="music/Grand Caravan.mp3">ciulstewko</li>
+                <li data-src="music/Caterina Valente - Tschau Tschau Bambina.flac">Caterina Valente - Tschau Tschau Bambina</li>
+            </ul>
         </div>
     </div>
 
@@ -175,7 +197,8 @@
         const audioPlayer = document.getElementById('audio-player');
         const canvas = document.getElementById('visualizer');
         const ctx = canvas.getContext('2d');
-
+        const randomSongBtn = document.getElementById('random-song-btn');
+        
         // Konfiguracja Web Audio API
         const audioContext = new (window.AudioContext || window.webkitAudioContext)();
         const analyser = audioContext.createAnalyser();
@@ -212,31 +235,7 @@
                     color = getRandomColor(); // Losowy kolor w trybie "Colorful"
                 } else {
                     const selectedColor = document.getElementById('color-select').value;
-                    if (selectedColor === 'random') {
-                        color = getRandomColor();
-                    } else if (selectedColor === 'red') {
-                        color = '#FF0000';
-                    } else if (selectedColor === 'green') {
-                        color = '#00FF00';
-                    } else if (selectedColor === 'blue') {
-                        color = '#0000FF';
-                    } else if (selectedColor === 'yellow') {
-                        color = '#FFFF00';
-                    } else if (selectedColor === 'purple') {
-                        color = '#800080';
-                    } else if (selectedColor === 'pink') {
-                        color = '#FFC0CB';
-                    } else if (selectedColor === 'orange') {
-                        color = '#FFA500';
-                    } else if (selectedColor === 'cyan') {
-                        color = '#00FFFF';
-                    } else if (selectedColor === 'magenta') {
-                        color = '#FF00FF';
-                    } else if (selectedColor === 'lime') {
-                        color = '#00FF00';
-                    } else {
-                        color = document.getElementById('custom-color').value;
-                    }
+                    color = selectedColor === 'random' ? getRandomColor() : selectedColor;
                 }
 
                 ctx.fillStyle = color;
@@ -282,10 +281,18 @@
             isColorful = this.checked;
         });
 
+        // Funkcja do odtwarzania losowego utworu
+        randomSongBtn.addEventListener('click', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
         // Dostosowanie rozmiaru canvas
         canvas.width = window.innerWidth - 40;
         canvas.height = 300;
-
     </script>
 
 </body>
