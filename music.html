@@ -221,30 +221,27 @@
 
         // Funkcja do rysowania wizualizera
         function drawVisualizer() {
-    analyser.getByteFrequencyData(dataArray);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    const barWidth = (canvas.width / bufferLength) * 2.5;
-    let barHeight;
-    let x = 0;
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
 
-    for (let i = 0; i < bufferLength; i++) {
-        barHeight = dataArray[i];
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
 
-        let color;
-        if (isColorful) {
-            color = getRandomColor(); // Zmieniamy na losowy kolor w trybie "Colorful"
-        } else {
-            const selectedColor = document.getElementById('color-select').value;
-            color = selectedColor === 'random' ? getRandomColor() : selectedColor;
-        }
+                let color;
+                if (isColorful) {
+                    color = getRandomColor(); // Losowy kolor w trybie "Colorful"
+                } else {
+                    const selectedColor = document.getElementById('color-select').value;
+                    color = selectedColor === 'random' ? getRandomColor() : selectedColor;
+                }
 
-        ctx.fillStyle = color;
-        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-        x += barWidth + 1;
-    }
-
-    requestAnimationFrame(drawVisualizer);
-}
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
 
             requestAnimationFrame(drawVisualizer);
         }
