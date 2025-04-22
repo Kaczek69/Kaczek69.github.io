@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CIULOFON™ PRO DE</title>
+  <style>
+    /* Ustawienia ogólne */
+    body {
+      background-color: #2f2f2f; /* ciemno grafitowy */
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      padding: 20px;
+      text-align: center;
+    }
+    /* Srebrny, metaliczny napis */
+    h1 {
+      font-size: 3rem;
+      margin: 0;
+      background: linear-gradient(45deg, #ccc, #eee, #aaa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Sekcja wizualizatora dźwięku */
+    #visualizer-section {
+      text-align: center;
+      margin: 20px;
+    }
+    #visualizer {
+      background-color: #000;
+      width: 80%;
+      max-width: 800px;
+      border: 1px solid #444;
+      margin: auto;
+      display: block;
+    }
+    #controls {
+      margin-top: 10px;
+    }
+    #controls label, #controls select, #controls input {
+      margin: 0 5px;
+      font-size: 1rem;
+    }
+    /* Sekcja trzech pudełek wyszukiwarki */
+    #search-windows {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin: 20px;
+    }
+    .search-box {
+      background-color: #444;
+      padding: 15px;
+      border-radius: 10px;
+      width: 300px;
+      text-align: center;
+    }
+    .search-box h2 {
+      margin-top: 0;
+    }
+    /* Sekcja wyszukiwania lokalnych utworów */
+    #local-search {
+      text-align: center;
+      margin: 20px;
+    }
+    #local-search input {
+      padding: 8px;
+      width: 60%;
+      max-width: 300px;
+      border: none;
+      border-radius: 5px;
+    }
+    #local-search button {
+      padding: 8px 12px;
+      margin-left: 5px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    /* Kafelek z utworem */
+    #local-music {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .music-tile {
+      background-color: #555;
+      padding: 15px;
+      margin: 10px auto;
+      border-radius: 10px;
+      width: 220px;
+      text-align: center;
+    }
+    .music-tile audio {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <!-- Nagłówek z napisem -->
+  <header>
+    <h1>CIULOFON™ PRO DE</h1>
+  </header>
+
+  <!-- Sekcja wizualizatora dźwięku -->
+  <section id="visualizer-section">
+    <canvas id="visualizer" width="800" height="200"></canvas>
+    <div id="controls">
+      <label for="colorSelect">Wybierz kolor:</label>
+      <select id="colorSelect">
+        <option value="#ff0000">Czerwony</option>
+        <option value="#00ff00">Zielony</option>
+        <option value="#0000ff">Niebieski</option>
+        <option value="#ffff00">Żółty</option>
+        <option value="#ff00ff">Fioletowy</option>
+        <option value="#00ffff">Cyjan</option>
+      </select>
+      <label for="customColor">Lub wybierz własny:</label>
+      <input type="color" id="customColor" value="#ff0000">
+      <label>
+        <input type="checkbox" id="rainbowCheckbox"> tęcza nad sosnowcem
+      </label>
+    </div>
+  </section>
+
+  <!-- Trzy wyszukiwarki utworów -->
+  <section id="search-windows">
+    <div class="search-box" id="spotify-box">
+      <h2>Spotify</h2>
+      <input type="text" placeholder="Szukaj utworu na Spotify" id="spotifyInput">
+      <button onclick="searchSpotify()">Szukaj</button>
+    </div>
+    <div class="search-box" id="youtube-box">
+      <h2>YouTube Music</h2>
+      <input type="text" placeholder="Szukaj utworu na YouTube Music" id="youtubeInput">
+      <button onclick="searchYoutube()">Szukaj</button>
+    </div>
+    <div class="search-box" id="soundcloud-box">
+      <h2>SoundCloud</h2>
+      <input type="text" placeholder="Szukaj utworu na SoundCloud" id="soundcloudInput">
+      <button onclick="searchSoundcloud()">Szukaj</button>
+    </div>
+  </section>
+
+  <!-- Wyszukiwanie utworów lokalnych -->
+  <section id="local-search">
+    <h2>Szukaj utworów lokalnych</h2>
+    <input type="text" id="localSearch" placeholder="Wyszukaj utwór">
+    <button onclick="searchLocal()">Szukaj</button>
+  </section>
+
+  <!-- Kafelek z pierwszym utworem -->
+  <section id="local-music">
+    <h2>Utwór:</h2>
+    <div class="music-tile">
+      <p>Wodziona</p>
+      <audio controls>
+        <source src="music/wodziona.mp3" type="audio/mpeg">
+        Twoja przeglądarka nie wspiera elementu audio.
+      </audio>
+    </div>
+  </section>
+
+  <script>
+    /* Synchronizacja wyboru koloru – gdy zmieniasz kolor z listy, ustawiamy go w palecie */
+    const colorSelect = document.getElementById("colorSelect");
+    const customColor = document.getElementById("customColor");
+    colorSelect.addEventListener("change", function() {
+      customColor.value = this.value;
+    });
+
+    // Konfiguracja Audio Visualizera
+    const canvas = document.getElementById("visualizer");
+    const ctx = canvas.getContext("2d");
+
+    // Tworzymy element audio – w tym przykładzie używamy pliku z katalogu music
+    const audioElement = new Audio("music/wodziona.mp3");
+    audioElement.loop = true;
+
+    // Inicjalizacja AudioContext i analizera
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    const bufferLength = analyser.frequencyBinCount;
+    const dataArray = new Uint8Array(bufferLength);
+
+    const source = audioCtx.createMediaElementSource(audioElement);
+    source.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    // Autoodtwarzanie – niektóre przeglądarki blokują autoplay,
+    // dlatego audio zostanie uruchomione po pierwszym kliknięciu użytkownika.
+    document.body.addEventListener("click", () => {
+      if (audioCtx.state !== "running") {
+        audioCtx.resume();
+      }
+      if (audioElement.paused) {
+        audioElement.play();
+      }
+    }, { once: true });
+
+    // Funkcja rysująca wizualizator
+    function draw() {
+      requestAnimationFrame(draw);
+      analyser.getByteFrequencyData(dataArray);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Obliczenie szerokości słupka (z przerwą między nimi)
+      const barWidth = (canvas.width / bufferLength) - 2;
+      let x = 0;
+      
+      for (let i = 0; i < bufferLength; i++) {
+        const barHeight = dataArray[i];
+        let fillStyle;
+        // Jeśli włączona jest opcja "tęcza nad sosnowcem" – ustaw dynamiczny kolor
+        if (document.getElementById("rainbowCheckbox").checked) {
+          const hue = (Date.now() / 10 + i * 10) % 360;
+          fillStyle = `hsl(${hue}, 100%, 50%)`;
+        } else {
+          fillStyle = customColor.value;
+        }
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+        x += barWidth + 2;
+      }
+    }
+    draw();
+
+    /* Funkcje wyszukiwania na zewnętrznych platformach */
+    function searchSpotify() {
+      const query = document.getElementById("spotifyInput").value.trim();
+      if(query) {
+        window.open("https://open.spotify.com/search/" + encodeURIComponent(query), "_blank");
+      }
+    }
+
+    function searchYoutube() {
+      const query = document.getElementById("youtubeInput").value.trim();
+      if(query) {
+        window.open("https://music.youtube.com/search?q=" + encodeURIComponent(query), "_blank");
+      }
+    }
+
+    function searchSoundcloud() {
+      const query = document.getElementById("soundcloudInput").value.trim();
+      if(query) {
+        window.open("https://soundcloud.com/search?q=" + encodeURIComponent(query), "_blank");
+      }
+    }
+
+    /* Funkcja wyszukiwania lokalnych utworów – przykładowa implementacja
+       (wymaga serwera i odpowiedniej logiki do przeszukiwania katalogu) */
+    function searchLocal() {
+      const query = document.getElementById("localSearch").value.trim();
+      if(query) {
+        alert("Wyszukiwanie lokalnych utworów: " + query + "\n(Funkcja niezaimplementowana)");
+      }
+    }
+  </script>
+</body>
+</html>
