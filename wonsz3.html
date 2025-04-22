@@ -34,6 +34,7 @@
       color: #b6ff00;
       padding: 10px;
       border-radius: 10px;
+      backdrop-filter: blur(5px);
     }
     #restart {
       font-family: 'Press Start 2P', monospace;
@@ -98,6 +99,7 @@
       display: flex;
       justify-content: center;
       gap: 20px;
+      backdrop-filter: blur(5px);
     }
     .footer a {
       color: #b6ff00;
@@ -146,7 +148,9 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawCell(food.x, food.y, '#f00');
       obstacle.forEach(o => drawCell(o.x, o.y, '#444'));
-      snake.forEach((s, i) => drawCell(s.x, s.y, i === 0 ? '#b6ff00' : '#6c8e24'));
+      snake.forEach((s, i) => {
+        if (s) drawCell(s.x, s.y, i === 0 ? '#b6ff00' : '#6c8e24');
+      });
 
       if (score === 21) {
         ctx.fillStyle = '#b6ff00';
@@ -172,6 +176,20 @@
       }
     }
 
+    function spawnFood() {
+      let valid = false;
+      let newFood;
+      while (!valid) {
+        newFood = {
+          x: Math.floor(Math.random() * (canvas.width / gridSize)),
+          y: Math.floor(Math.random() * (canvas.height / gridSize))
+        };
+        valid = !obstacle.some(o => o.x === newFood.x && o.y === newFood.y) &&
+                (!snake || !snake.some(s => s.x === newFood.x && s.y === newFood.y));
+      }
+      return newFood;
+    }
+
     function update() {
       const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
@@ -190,10 +208,7 @@
       if (head.x === food.x && head.y === food.y) {
         score++;
         scoreEl.textContent = 'Score: ' + score;
-        food = {
-          x: Math.floor(Math.random() * (canvas.width / gridSize)),
-          y: Math.floor(Math.random() * (canvas.height / gridSize))
-        };
+        food = spawnFood();
         speed = Math.max(50, 150 - score * 2);
         clearInterval(gameInterval);
         gameInterval = setInterval(update, speed);
@@ -228,11 +243,11 @@
     function startGame() {
       snake = [{ x: 10, y: 10 }];
       direction = { x: 1, y: 0 };
-      food = { x: 15, y: 15 };
+      createObstacle();
+      food = spawnFood();
       score = 0;
       speed = 150;
       scoreEl.textContent = 'Score: 0';
-      createObstacle();
       drawGame();
       clearInterval(gameInterval);
       gameInterval = setInterval(update, speed);
