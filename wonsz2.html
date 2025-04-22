@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Snake 3.0 GPT</title>
+  <title>Snake GPT</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
 
@@ -34,7 +34,6 @@
       color: #b6ff00;
       padding: 10px;
       border-radius: 10px;
-      backdrop-filter: blur(5px);
     }
     #restart {
       font-family: 'Press Start 2P', monospace;
@@ -99,7 +98,6 @@
       display: flex;
       justify-content: center;
       gap: 20px;
-      backdrop-filter: blur(5px);
     }
     .footer a {
       color: #b6ff00;
@@ -109,7 +107,7 @@
   </style>
 </head>
 <body>
-  <h1>Snake 3.0 GPT</h1>
+  <h1>Snake GPT</h1>
   <div id="score">Score: 0</div>
   <canvas id="game" width="400" height="400"></canvas>
   <button id="restart">🔁</button>
@@ -137,7 +135,6 @@
 
     const gridSize = 20;
     let snake, direction, food, gameInterval, score, speed;
-    let obstacle = [];
 
     function drawCell(x, y, color) {
       ctx.fillStyle = color;
@@ -147,58 +144,22 @@
     function drawGame() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawCell(food.x, food.y, '#f00');
-      obstacle.forEach(o => drawCell(o.x, o.y, '#444'));
-      snake.forEach((s, i) => {
-        if (s) drawCell(s.x, s.y, i === 0 ? '#b6ff00' : '#6c8e24');
-      });
-
-      if (score === 21) {
-        ctx.fillStyle = '#b6ff00';
-        ctx.font = '12px "Press Start 2P"';
-        ctx.fillText('CIUL KOŁO® Approved ✅', 30, 200);
-      }
-    }
-
-    function createObstacle() {
-      obstacle = [];
-      const length = Math.floor(Math.random() * 5) + 6;
-      const vertical = Math.random() < 0.5;
-      const midX = Math.floor(canvas.width / (2 * gridSize));
-      const midY = Math.floor(canvas.height / (2 * gridSize));
-      const startX = midX + Math.floor(Math.random() * 5 - 2);
-      const startY = midY + Math.floor(Math.random() * 5 - 2);
-
-      const gapIndex = Math.floor(length / 2);
-
-      for (let i = 0; i < length; i++) {
-        if (i === gapIndex) continue;
-        obstacle.push({ x: startX + (vertical ? 0 : i), y: startY + (vertical ? i : 0) });
-      }
-    }
-
-    function spawnFood() {
-      let valid = false;
-      let newFood;
-      while (!valid) {
-        newFood = {
-          x: Math.floor(Math.random() * (canvas.width / gridSize)),
-          y: Math.floor(Math.random() * (canvas.height / gridSize))
-        };
-        valid = !obstacle.some(o => o.x === newFood.x && o.y === newFood.y) &&
-                (!snake || !snake.some(s => s.x === newFood.x && s.y === newFood.y));
-      }
-      return newFood;
+      snake.forEach((s, i) => drawCell(s.x, s.y, i === 0 ? '#b6ff00' : '#6c8e24'));
     }
 
     function update() {
       const head = { x: snake[0].x + direction.x, y: snake[0].y + direction.y };
 
+      // Teleportacja: z lewej na prawą, z góry na dół
       if (head.x < 0) head.x = canvas.width / gridSize - 1;
       if (head.x >= canvas.width / gridSize) head.x = 0;
       if (head.y < 0) head.y = canvas.height / gridSize - 1;
       if (head.y >= canvas.height / gridSize) head.y = 0;
 
-      if (snake.some(s => s.x === head.x && s.y === head.y) || obstacle.some(o => o.x === head.x && o.y === head.y)) {
+      // Sprawdzanie kolizji
+      if (
+        snake.some(s => s.x === head.x && s.y === head.y)
+      ) {
         clearInterval(gameInterval);
         alert('Koniec gry! Score: ' + score);
         return;
@@ -208,8 +169,12 @@
       if (head.x === food.x && head.y === food.y) {
         score++;
         scoreEl.textContent = 'Score: ' + score;
-        food = spawnFood();
-        speed = Math.max(50, 150 - score * 2);
+        food = {
+          x: Math.floor(Math.random() * (canvas.width / gridSize)),
+          y: Math.floor(Math.random() * (canvas.height / gridSize))
+        };
+        // Przyspieszanie gry po każdym punkcie
+        speed = Math.max(50, 150 - score * 2); // maksymalna prędkość 50ms, początkowa 150ms
         clearInterval(gameInterval);
         gameInterval = setInterval(update, speed);
       } else {
@@ -219,13 +184,7 @@
       drawGame();
     }
 
-    document.addEventListener('keydown', e => {
-      if (e.key.toLowerCase() === 'r') {
-        startGame();
-      } else {
-        handleKey(e.key);
-      }
-    });
+    document.addEventListener('keydown', e => handleKey(e.key));
 
     function simulateKey(key) {
       handleKey(key);
@@ -243,10 +202,9 @@
     function startGame() {
       snake = [{ x: 10, y: 10 }];
       direction = { x: 1, y: 0 };
-      createObstacle();
-      food = spawnFood();
+      food = { x: 15, y: 15 };
       score = 0;
-      speed = 150;
+      speed = 150; // początkowa prędkość
       scoreEl.textContent = 'Score: 0';
       drawGame();
       clearInterval(gameInterval);
