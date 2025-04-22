@@ -27,19 +27,19 @@
       z-index: 2;
     }
     
-    /* Plansza – zwiększona wielkość komórek */
+    /* Plansza – 20x20 px komórek */
     #game {
       display: grid;
-      grid-template-columns: repeat(30, 25px);
-      grid-template-rows: repeat(20, 25px);
+      grid-template-columns: repeat(30, 20px);
+      grid-template-rows: repeat(20, 20px);
       gap: 2px;
       position: relative;
       margin-bottom: 20px;
     }
     
     .cell {
-      width: 25px;
-      height: 25px;
+      width: 20px;
+      height: 20px;
       background: #111;
       border-radius: 3px;
     }
@@ -47,12 +47,15 @@
     .dot {
       background: yellow;
       border-radius: 50%;
-      width: 12px;
-      height: 12px;
+      width: 8px;
+      height: 8px;
       margin: auto;
     }
     
+    /* Gracz – teraz zajmuje całą komórkę, 20px x 20px */
     .player {
+      width: 20px;
+      height: 20px;
       background: #00f;
       border-radius: 50%;
     }
@@ -65,10 +68,10 @@
       background: #444;
     }
     
-    /* Duchy */
+    /* Duchy – rozmiar jak gracza */
     .ghost {
-      width: 25px;
-      height: 25px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       position: absolute;
       transition: left 0.2s, top 0.2s;
@@ -76,7 +79,8 @@
     }
     
     /* Nakładki: GAME OVER i PAUSED */
-    #overlay, #pauseOverlay {
+    #overlay,
+    #pauseOverlay {
       position: fixed;
       top: 0;
       left: 0;
@@ -93,7 +97,7 @@
       padding: 20px;
     }
     
-    /* Panel sterowania mobilnego – poniżej planszy */
+    /* Panel sterowania mobilnego */
     #mobile-controls {
       display: flex;
       flex-direction: column;
@@ -118,13 +122,14 @@
       cursor: pointer;
     }
     
-    /* D-pad – układ w stylu krzyża */
+    /* D-pad – układ 3x3, przyciski znacznie powiększone */
     #dpad {
       display: grid;
       grid-template-areas: 
         ". up ."
-        "left down right";
-      gap: 10px;
+        "left . right"
+        ". down .";
+      gap: 20px;
       justify-items: center;
       align-items: center;
     }
@@ -134,15 +139,15 @@
       color: #fff;
       border: 2px solid #fff;
       font-family: 'Press Start 2P', cursive;
-      font-size: 16px;
-      width: 50px;
-      height: 50px;
+      font-size: 24px;
+      width: 80px;
+      height: 80px;
       cursor: pointer;
     }
     
-    #dpad #up-btn { grid-area: up; }
-    #dpad #left-btn { grid-area: left; }
-    #dpad #down-btn { grid-area: down; }
+    #dpad #up-btn    { grid-area: up; }
+    #dpad #left-btn  { grid-area: left; }
+    #dpad #down-btn  { grid-area: down; }
     #dpad #right-btn { grid-area: right; }
     
     /* Informacje o sterowaniu i zasadach */
@@ -158,7 +163,7 @@
 <body>
   <div id="score">Score: 0</div>
   <div id="game"></div>
-  <div id="overlay">GAME OVER<br>Press R or the reset button to restart</div>
+  <div id="overlay">GAME OVER<br>Press R or Reset to restart</div>
   <div id="pauseOverlay">PAUSED</div>
   
   <!-- Mobilne sterowanie: przyciski Reset i Pause, D-pad oraz informacje -->
@@ -175,7 +180,9 @@
     </div>
     <div id="info">
       <p>Sterowanie: P - Pause, R - Reset, Strzałki / WASD / D-Pad - Ruch</p>
-      <p>Zasady: Zbierz wszystkie monety, unikaj duchów. Po zebraniu monet, poziom się resetuje, a wynik nalicza się dalej.</p>
+      <p>Zasady: Zbierz wszystkie monety, unikaj duchów.<br>
+         Gdy zbierzesz wszystkie monety i zaczniesz kolejny poziom, punkty pozostają.<br>
+         Gdy przegrasz, punkty resetują się do 0.</p>
     </div>
   </div>
   
@@ -188,8 +195,8 @@
     let cells = [];
     let level;
     let playerX, playerY;
-    let ghosts = [];
-    let ghostElements = [];
+    let ghosts = [];        // Duchy
+    let ghostElements = []; // Elementy DOM dla duchów
     let score = 0;
     let gameOver = false;
     let isPaused = false;
@@ -200,7 +207,7 @@
     const gameOverOverlay = document.getElementById("overlay");
     const pauseOverlay = document.getElementById("pauseOverlay");
     
-    // Inicjalizacja nowego poziomu – wynik pozostaje
+    // Inicjalizacja nowego poziomu
     function startNewLevel() {
       game.innerHTML = "";
       cells = [];
@@ -226,7 +233,6 @@
       startGhostTimer();
     }
     
-    // Generuje obramowanie, ściany, drogi i monety
     function generateWalls() {
       // Obramówka (wartość 3)
       for (let y = 0; y < rows; y++) {
@@ -236,7 +242,6 @@
           }
         }
       }
-      
       // Losowe ściany (wartość 1)
       for (let y = 1; y < rows - 1; y++) {
         for (let x = 1; x < cols - 1; x++) {
@@ -245,8 +250,7 @@
           }
         }
       }
-      
-      // Budujemy dostępne drogi metodą DFS – oznaczamy jako 2
+      // Budowa drogi metodą DFS (oznaczamy jako 2)
       const stack = [[1, 1]];
       level[1][1] = 2;
       while (stack.length > 0) {
@@ -261,7 +265,6 @@
           }
         }
       }
-      
       // Na 50% dostępnych dróg (wartość 2) umieszczamy monety (wartość 0)
       for (let y = 1; y < rows - 1; y++) {
         for (let x = 1; x < cols - 1; x++) {
@@ -270,9 +273,7 @@
           }
         }
       }
-      
       checkReachableDots();
-      
       // Generujemy komórki planszy w DOM
       for (let y = 0; y < rows; y++) {
         for (let x = 0; x < cols; x++) {
@@ -287,7 +288,6 @@
       }
     }
     
-    // Sprawdza, które monety są osiągalne – niedostępne zamienia na ściany
     function checkReachableDots() {
       const stack = [[playerY, playerX]];
       const visited = Array.from({ length: rows }, () => Array(cols).fill(false));
@@ -298,7 +298,10 @@
         for (const [dy, dx] of directions) {
           const ny = cy + dy;
           const nx = cx + dx;
-          if (ny >= 1 && ny < rows - 1 && nx >= 1 && nx < cols - 1 && !visited[ny][nx] && level[ny][nx] !== 1 && level[ny][nx] !== 3) {
+          if (ny >= 1 && ny < rows - 1 && nx >= 1 && nx < cols - 1 &&
+              !visited[ny][nx] &&
+              level[ny][nx] !== 1 &&
+              level[ny][nx] !== 3) {
             visited[ny][nx] = true;
             stack.push([ny, nx]);
           }
@@ -323,10 +326,9 @@
       return y * cols + x;
     }
     
-    // Rysowanie planszy, gracza i aktualizacja pozycji duchów
     function draw() {
-      for (let y = 0; y < rows; y++){
-        for (let x = 0; x < cols; x++){
+      for (let y = 0; y < rows; y++) {
+        for (let x = 0; x < cols; x++) {
           const cell = cells[getIndex(x, y)];
           cell.className = "cell";
           if (level[y][x] === 1) cell.classList.add("wall");
@@ -336,12 +338,11 @@
       }
       cells[getIndex(playerX, playerY)].classList.add("player");
       
-      // Uaktualnienie pozycji duchów
       ghosts.forEach((ghost, i) => {
         let cell = cells[getIndex(ghost.x, ghost.y)];
         if (cell) {
           ghostElements[i].style.left = cell.offsetLeft + "px";
-          ghostElements[i].style.top = cell.offsetTop + "px";
+          ghostElements[i].style.top  = cell.offsetTop + "px";
         }
       });
     }
@@ -378,9 +379,7 @@
         for (let [mx, my] of directions) {
           let tx = ghost.x + mx;
           let ty = ghost.y + my;
-          if (canMoveTo(tx, ty)) {
-            possibilities.push([mx, my]);
-          }
+          if (canMoveTo(tx, ty)) possibilities.push([mx, my]);
         }
         if (possibilities.length > 0) {
           let [mx, my] = possibilities[Math.floor(Math.random() * possibilities.length)];
@@ -419,14 +418,15 @@
     function showGameOver() {
       clearInterval(ghostInterval);
       gameOverOverlay.style.display = "flex";
+      // Przy przegranej resetujemy wynik do 0.
+      score = 0;
+      scoreDisplay.textContent = "Score: " + score;
     }
     
-    // Reset poziomu (wynik pozostaje)
     function resetGame() {
       startNewLevel();
     }
     
-    // Funkcja podejmująca próbę ruchu gracza na dane współrzędne
     function attemptMove(newX, newY) {
       if (gameOver || isPaused) return;
       if (newX !== playerX || newY !== playerY) {
@@ -439,7 +439,7 @@
             scoreDisplay.textContent = "Score: " + score;
           }
           draw();
-          // Po zebraniu wszystkich monet resetujemy poziom
+          // Jeśli nie zostały monety, gracz wygrywa i wynik pozostaje na kolejnym poziomie
           const coinsLeft = level.some(row => row.includes(0));
           if (!coinsLeft) {
             startNewLevel();
@@ -448,7 +448,6 @@
       }
     }
     
-    // Obsługa klawiatury (Arrow keys oraz WASD)
     document.addEventListener("keydown", (e) => {
       if (gameOver) {
         if (e.key.toLowerCase() === "r") resetGame();
@@ -472,17 +471,14 @@
       attemptMove(newX, newY);
     });
     
-    // Obsługa przycisków D-pad (mobilne sterowanie)
     document.getElementById("up-btn").addEventListener("click", () => { attemptMove(playerX, playerY - 1); });
     document.getElementById("down-btn").addEventListener("click", () => { attemptMove(playerX, playerY + 1); });
     document.getElementById("left-btn").addEventListener("click", () => { attemptMove(playerX - 1, playerY); });
     document.getElementById("right-btn").addEventListener("click", () => { attemptMove(playerX + 1, playerY); });
     
-    // Obsługa mobilnych przycisków Reset i Pause
-    document.getElementById("reset-btn").addEventListener("click", () => { resetGame(); });
-    document.getElementById("pause-btn").addEventListener("click", () => { togglePause(); });
+    document.getElementById("reset-btn").addEventListener("click", resetGame);
+    document.getElementById("pause-btn").addEventListener("click", togglePause);
     
-    // Startujemy pierwszy poziom
     startNewLevel();
   </script>
 </body>
