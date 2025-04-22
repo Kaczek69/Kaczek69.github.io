@@ -423,10 +423,14 @@
       scoreDisplay.textContent = "Score: " + score;
     }
     
+    // Jeśli klikamy restart, punkty ustawiamy na 0
     function resetGame() {
+      score = 0;
+      scoreDisplay.textContent = "Score: " + score;
       startNewLevel();
     }
     
+    // Próba ruchu gracza – wywoływana przez klawiaturę oraz d-pad
     function attemptMove(newX, newY) {
       if (gameOver || isPaused) return;
       if (newX !== playerX || newY !== playerY) {
@@ -439,7 +443,7 @@
             scoreDisplay.textContent = "Score: " + score;
           }
           draw();
-          // Jeśli nie zostały monety, gracz wygrywa i wynik pozostaje na kolejnym poziomie
+          // Jeśli monet już nie ma, gracz wygrywa i rozpoczyna nowy poziom (wynik pozostaje)
           const coinsLeft = level.some(row => row.includes(0));
           if (!coinsLeft) {
             startNewLevel();
@@ -450,7 +454,7 @@
     
     document.addEventListener("keydown", (e) => {
       if (gameOver) {
-        if (e.key.toLowerCase() === "r") resetGame();
+        if (e.key.toLowerCase() === "r") { resetGame(); }
         return;
       }
       if (e.key.toLowerCase() === "r") { resetGame(); return; }
@@ -471,10 +475,40 @@
       attemptMove(newX, newY);
     });
     
-    document.getElementById("up-btn").addEventListener("click", () => { attemptMove(playerX, playerY - 1); });
-    document.getElementById("down-btn").addEventListener("click", () => { attemptMove(playerX, playerY + 1); });
-    document.getElementById("left-btn").addEventListener("click", () => { attemptMove(playerX - 1, playerY); });
-    document.getElementById("right-btn").addEventListener("click", () => { attemptMove(playerX + 1, playerY); });
+    // Funkcja pomocnicza – ustawia długotrwałe powtarzanie ruchu przy przytrzymaniu przycisku d-pada.
+    function attachRepeater(buttonID, dx, dy) {
+      const btn = document.getElementById(buttonID);
+      let intervalID;
+      
+      const startRepeater = () => {
+        attemptMove(playerX + dx, playerY + dy);
+        intervalID = setInterval(() => {
+          attemptMove(playerX + dx, playerY + dy);
+        }, 150);
+      };
+      const stopRepeater = () => {
+        clearInterval(intervalID);
+      };
+      
+      btn.addEventListener("mousedown", startRepeater);
+      btn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        startRepeater();
+      });
+      btn.addEventListener("mouseup", stopRepeater);
+      btn.addEventListener("mouseleave", stopRepeater);
+      btn.addEventListener("touchend", stopRepeater);
+      btn.addEventListener("touchcancel", stopRepeater);
+    }
+    
+    // Ustaw powtarzanie ruchu dla każdego przycisku d-pada
+    attachRepeater("up-btn", 0, -1);
+    attachRepeater("down-btn", 0, 1);
+    attachRepeater("left-btn", -1, 0);
+    attachRepeater("right-btn", 1, 0);
+    
+    // Wyłączamy domyślne "click" dla przycisków d-pada, by nie powielać ruchu
+    // (Nie jest konieczne, gdyż attachRepeater już wywołuje ruch przy dotknięciu)
     
     document.getElementById("reset-btn").addEventListener("click", resetGame);
     document.getElementById("pause-btn").addEventListener("click", togglePause);
