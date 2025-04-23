@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZAJEBYWATOR™ - Pobierz v1.2 Beta</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #2f2f2f; /* Ciemny grafit */
+            color: white;
+            margin: 0;
+            padding: 50px 20px;
+        }
+        header {
+            background-color: #ff5722; /* Intensywny, kontrastujący kolor */
+            padding: 20px;
+            margin-bottom: 50px;
+            <p>kurwa</p>
+        }
+        header h1 {
+            font-size: 3em;
+            margin: 0;
+            text-shadow: 2px 2px 4px #000;
+        }
+        button {
+            background-color: #ff5722;
+            border: none;
+            color: white;
+            padding: 15px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #e64a19;
+        }
+    </style>
+    <script>
+        function downloadFiles() {
+            // Lista plików do pobrania
+            const files = [
+                "pierdoły/zajebywator_v1.2_Beta.tar.001",
+                "pierdoły/zajebywator_v1.2_Beta.tar.002",
+                "pierdoły/zajebywator_v1.2_Beta.tar.003",
+                "pierdoły/zajebywator_v1.2_Beta.tar.004"
+            ];
+
+            files.forEach(file => {
+                // Tworzymy tymczasowy element <a>
+                const a = document.createElement("a");
+                a.href = file; // Link do pliku - zakładamy, że plik znajduje się w tym samym katalogu
+                a.download = file;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            });
+        }
+    </script>
+</head>
+<body>
+    <header>
+        <h1>ZAJEBYWATOR™</h1>
+    </header>
+    <p>Wkuwiają cię te jebane yt downloadery króre chuja robią a twój
+    komputer</p>
+    <p>po spotkaniu z nimi wygląda jak turecki bazar? Ta? to zajebiście</p>
+    <p>Pobierz se kurwa to gówno i sklej pliki niczym stary twoje</p> <p>Lego technics butaprenem po imprezie w remizie
+    <main>
+        <button onclick="downloadFiles()">Pobierz teraz v1.2 Beta</button>
+    </main>
+</body>
+</html>
