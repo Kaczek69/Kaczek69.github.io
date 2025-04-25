@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kontroler IBIS</title>
+    <style>
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: black;
+            color: green;
+            text-align: center;
+            padding: 20px;
+        }
+
+        #screen {
+            background-color: green;
+            color: black;
+            font-size: 24px;
+            padding: 20px;
+            border: 5px solid green;
+            display: inline-block;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        #controls {
+            margin-top: 20px;
+        }
+
+        .button {
+            background-color: #808080;
+            color: white;
+            padding: 30px;
+            font-size: 24px;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            border-radius: 10px;
+            width: 100px;
+            height: 100px;
+            display: inline-block;
+        }
+
+        .button.blue {
+            background-color: #1E90FF;
+        }
+
+        .button:hover {
+            opacity: 0.8;
+        }
+
+        #trackName {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        audio {
+            display: none;
+        }
+
+        #changeRouteButton {
+            background-color: #32CD32;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+
+        #changeRouteButton:hover {
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+<!Linia-kierunek>
+    <h1>3 - Kierunek IKEA FALKENDUPEN</h1>
+
+    <button id="changeRouteButton">Zmiana Trasy</button>
+    
+    <div id="screen">
+        <div id="trackName">Bhf Falkensee</div>
+    </div>
+
+    <div id="controls">
+        <button class="button" id="prevTrack">Ruck</button>
+        <button class="button blue" id="nextTrack">Fort</button>
+    </div>
+
+    <audio id="audioPlayer" controls>
+        <source id="audioSource" src="" type="audio/wav">
+        Your browser does not support the audio element.
+    </audio>
+
+    <script>
+        const audioFiles = [
+            {name: "Bhf Falkensee", src: "skrypty_z_dopy/omsi2/Bhf Falkensee.wav"},
+            {name: "Hahneberg", src: "skrypty_z_dopy/omsi2/Hahneberg.wav"},
+            {name: "Moritzstr", src: "skrypty_z_dopy/omsi2/Moritzstr.wav"}
+        ];
+
+        let currentTrack = 0;
+        let reverseOrder = false; // Flaga zarządzająca kierunkiem odtwarzania
+        let isRouteChanged = false;
+
+        const trackNameElement = document.getElementById('trackName');
+        const prevButton = document.getElementById('prevTrack');
+        const nextButton = document.getElementById('nextTrack');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const audioSource = document.getElementById('audioSource');
+        const changeRouteButton = document.getElementById('changeRouteButton');
+
+        // Funkcja do aktualizacji nazwy przystanku oraz odtwarzania pliku audio
+        function updateTrack() {
+            const currentFile = audioFiles[currentTrack];
+            trackNameElement.textContent = currentFile.name;
+            audioSource.src = currentFile.src;
+            audioPlayer.load();
+            audioPlayer.play();
+        }
+
+        // Obsługa kliknięcia przycisku "Ruck" (poprzedni przystanek)
+        prevButton.addEventListener('click', () => {
+            if (reverseOrder) {
+                if (currentTrack < audioFiles.length - 1) {
+                    currentTrack++;
+                    updateTrack();
+                }
+            } else {
+                if (currentTrack > 0) {
+                    currentTrack--;
+                    updateTrack();
+                }
+            }
+        });
+
+        // Obsługa kliknięcia przycisku "Fort" (następny przystanek)
+        nextButton.addEventListener('click', () => {
+            if (reverseOrder) {
+                if (currentTrack > 0) {
+                    currentTrack--;
+                    updateTrack();
+                }
+            } else {
+                if (currentTrack < audioFiles.length - 1) {
+                    currentTrack++;
+                    updateTrack();
+                }
+            }
+        });
+
+        // Obsługa zmiany trasy
+        changeRouteButton.addEventListener('click', () => {
+            isRouteChanged = !isRouteChanged;
+            reverseOrder = isRouteChanged;
+
+            if (isRouteChanged) {
+                document.querySelector("h1").textContent = "3 - Kierunek Cipenberger Str.";
+                currentTrack = audioFiles.length - 1; // Ustawienie na ostatni plik w liście
+            } else {
+                document.querySelector("h1").textContent = "3 - Kierunek IKEA FALKENDUPEN";
+                currentTrack = 0; // Ustawienie na pierwszy plik w liście
+            }
+
+            updateTrack();
+        });
+
+        // Początkowe ustawienie nazwy przystanku i rozpoczęcie odtwarzania pierwszego pliku
+        updateTrack();
+    </script>
+
+</body>
+</html>
