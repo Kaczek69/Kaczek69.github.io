@@ -76,13 +76,13 @@
     </style>
 </head>
 <body>
-<!Linia-kierunek>
-    <h1>3 - Kierunek IKEA FALKENDUPEN</h1>
+
+    <h1>Linia 3 - Kierunek IKEA FALKENDUPEN</h1>
 
     <button id="changeRouteButton">Zmiana Trasy</button>
     
     <div id="screen">
-        <div id="trackName">Bhf Falkensee</div>
+        <div id="trackName">Bhf Neusted</div>
     </div>
 
     <div id="controls">
@@ -91,15 +91,15 @@
     </div>
 
     <audio id="audioPlayer" controls>
-        <source id="audioSource" src="" type="audio/wav">
+        <source id="audioSource" src="" type="audio/mp3">
         Your browser does not support the audio element.
     </audio>
 
     <script>
         const audioFiles = [
-            {name: "Bhf Falkensee", src: "skrypty_z_dopy/omsi2/Bhf Falkensee.wav"},
-            {name: "Hahneberg", src: "skrypty_z_dopy/omsi2/Hahneberg.wav"},
-            {name: "Moritzstr", src: "skrypty_z_dopy/omsi2/Moritzstr.wav"}
+            {name: "Bhf Falkensee", src: "skrypty_z_dopy/omsi2/Bhf Falkensee.mp3"},
+            {name: "Hahneberg", src: "skrypty_z_dopy/omsi2/Hahneberg.mp3"},
+            {name: "Moritzstr", src: "skrypty_z_dopy/omsi2/Moritzstr.mp3"}
         ];
 
         let currentTrack = 0;
@@ -158,10 +158,10 @@
             reverseOrder = isRouteChanged;
 
             if (isRouteChanged) {
-                document.querySelector("h1").textContent = "3 - Kierunek Cipenberger Str.";
+                document.querySelector("h1").textContent = "Linia 3 - Kierunek Cipenberger Str.";
                 currentTrack = audioFiles.length - 1; // Ustawienie na ostatni plik w liście
             } else {
-                document.querySelector("h1").textContent = "3 - Kierunek IKEA FALKENDUPEN";
+                document.querySelector("h1").textContent = "Linia 3 - Kierunek IKEA FALKENDUPEN";
                 currentTrack = 0; // Ustawienie na pierwszy plik w liście
             }
 
