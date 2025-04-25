@@ -1,176 +1,117 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kontroler IBIS</title>
-    <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: black;
-            color: green;
-            text-align: center;
-            padding: 20px;
-        }
-
-        #screen {
-            background-color: green;
-            color: black;
-            font-size: 24px;
-            padding: 20px;
-            border: 5px solid green;
-            display: inline-block;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        #controls {
-            margin-top: 20px;
-        }
-
-        .button {
-            background-color: #808080;
-            color: white;
-            padding: 30px;
-            font-size: 24px;
-            border: none;
-            cursor: pointer;
-            margin: 10px;
-            border-radius: 10px;
-            width: 100px;
-            height: 100px;
-            display: inline-block;
-        }
-
-        .button.blue {
-            background-color: #1E90FF;
-        }
-
-        .button:hover {
-            opacity: 0.8;
-        }
-
-        #trackName {
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        audio {
-            display: none;
-        }
-
-        #changeRouteButton {
-            background-color: #32CD32;
-            color: white;
-            font-size: 18px;
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            margin-bottom: 20px;
-            border-radius: 10px;
-        }
-
-        #changeRouteButton:hover {
-            opacity: 0.8;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Linia 3 – IKEA FALKENDUPEN</title>
+  <style>
+    body {
+      font-family: monospace;
+      background: #111;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+    #screen {
+      background: #00ff00;
+      color: black;
+      font-size: 28px;
+      padding: 20px;
+      margin: 20px auto;
+      width: 80%;
+      max-width: 500px;
+      border-radius: 5px;
+    }
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    button {
+      font-size: 20px;
+      padding: 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100px;
+      height: 100px;
+    }
+    #prevBtn {
+      background: gray;
+      color: white;
+    }
+    #nextBtn {
+      background: blue;
+      color: white;
+    }
+    #changeRoute {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 14px;
+      padding: 8px;
+      background: #444;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
 </head>
 <body>
 
-    <h1>Linia 3 - Kierunek IKEA FALKENDUPEN</h1>
+<h1>Linia 3 – <span id="direction">IKEA FALKENDUPEN</span></h1>
+<button id="changeRoute">Zmiana trasy</button>
+<div id="screen"></div>
 
-    <button id="changeRouteButton">powrót</button>
-    
-    <div id="screen">
-        <div id="trackName">Bhf Neusted</div>
-    </div>
+<div class="buttons">
+  <button id="prevBtn">Ruck</button>
+  <button id="nextBtn">Fort</button>
+</div>
 
-    <div id="controls">
-        <button class="button" id="prevTrack">Ruck</button>
-        <button class="button blue" id="nextTrack">Fort</button>
-    </div>
+<audio id="audioPlayer"></audio>
 
-    <audio id="audioPlayer" controls>
-        <source id="audioSource" src="" type="audio/mp3">
-        Your browser does not support the audio element.
-    </audio>
+<script>
+const forwardStops = ["Bhf Falkensee", "Hannenberg", "Moritzstr"];
+let reversed = false;
+let currentIndex = 0;
 
-    <script>
-        const audioFiles = [
-            {name: "Bhf Falkensee", src: "skrypty_z_dopy/omsi2/Bhf Falkensee.mp3"},
-            {name: "Hahneberg", src: "skrypty_z_dopy/omsi2/Hahneberg.mp3"},
-            {name: "Moritzstr", src: "skrypty_z_dopy/omsi2/Moritzstr.mp3"}
-        ];
+function getStops() {
+  return reversed ? [...forwardStops].reverse() : forwardStops;
+}
 
-        let currentTrack = 0;
-        let reverseOrder = false; // Flaga zarządzająca kierunkiem odtwarzania
-        let isRouteChanged = false;
+function playCurrent() {
+  const stops = getStops();
+  const stop = stops[currentIndex];
+  document.getElementById('screen').innerText = stop;
+  const audio = document.getElementById('audioPlayer');
+  audio.src = `skrypty_z_dopy/omsi2/${stop}.mp3`;
+  audio.play();
+}
 
-        const trackNameElement = document.getElementById('trackName');
-        const prevButton = document.getElementById('prevTrack');
-        const nextButton = document.getElementById('nextTrack');
-        const audioPlayer = document.getElementById('audioPlayer');
-        const audioSource = document.getElementById('audioSource');
-        const changeRouteButton = document.getElementById('changeRouteButton');
+document.getElementById('nextBtn').onclick = () => {
+  const stops = getStops();
+  if (currentIndex < stops.length - 1) {
+    currentIndex++;
+    playCurrent();
+  }
+};
 
-        // Funkcja do aktualizacji nazwy przystanku oraz odtwarzania pliku audio
-        function updateTrack() {
-            const currentFile = audioFiles[currentTrack];
-            trackNameElement.textContent = currentFile.name;
-            audioSource.src = currentFile.src;
-            audioPlayer.load();
-            audioPlayer.play();
-        }
+document.getElementById('prevBtn').onclick = () => {
+  if (currentIndex > 0) {
+    currentIndex--;
+    playCurrent();
+  }
+};
 
-        // Obsługa kliknięcia przycisku "Ruck" (poprzedni przystanek)
-        prevButton.addEventListener('click', () => {
-            if (reverseOrder) {
-                if (currentTrack < audioFiles.length - 1) {
-                    currentTrack++;
-                    updateTrack();
-                }
-            } else {
-                if (currentTrack > 0) {
-                    currentTrack--;
-                    updateTrack();
-                }
-            }
-        });
+document.getElementById('changeRoute').onclick = () => {
+  reversed = !reversed;
+  currentIndex = 0;
+  document.getElementById('direction').innerText = reversed ? "CIpenberger Str" : "IKEA FALKENDUPEN";
+  playCurrent();
+};
 
-        // Obsługa kliknięcia przycisku "Fort" (następny przystanek)
-        nextButton.addEventListener('click', () => {
-            if (reverseOrder) {
-                if (currentTrack > 0) {
-                    currentTrack--;
-                    updateTrack();
-                }
-            } else {
-                if (currentTrack < audioFiles.length - 1) {
-                    currentTrack++;
-                    updateTrack();
-                }
-            }
-        });
-
-        // Obsługa zmiany trasy
-        changeRouteButton.addEventListener('click', () => {
-            isRouteChanged = !isRouteChanged;
-            reverseOrder = isRouteChanged;
-
-            if (isRouteChanged) {
-                document.querySelector("h1").textContent = "Linia 3 - Kierunek Cipenberger Str.";
-                currentTrack = audioFiles.length - 1; // Ustawienie na ostatni plik w liście
-            } else {
-                document.querySelector("h1").textContent = "Linia 3 - Kierunek IKEA FALKENDUPEN";
-                currentTrack = 0; // Ustawienie na pierwszy plik w liście
-            }
-
-            updateTrack();
-        });
-
-        // Początkowe ustawienie nazwy przystanku i rozpoczęcie odtwarzania pierwszego pliku
-        updateTrack();
-    </script>
+// Start od razu
+playCurrent();
+</script>
 
 </body>
 </html>
