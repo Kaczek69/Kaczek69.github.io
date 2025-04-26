@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<!-- saved from url=(0039)https://kaczek69.github.io/cfonEXP.html -->
+<html lang="pl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muzyczny Odtwarzacz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 50px;
+            color: white; /* Ciulofon jest teraz biały */
+        }
+
+        @keyframes rainbow-text {
+            0% { color: #ff0000; }
+            14% { color: #ff7f00; }
+            28% { color: #ffff00; }
+            42% { color: #00ff00; }
+            57% { color: #0000ff; }
+            71% { color: #4b0082; }
+            85% { color: #8b00ff; }
+            100% { color: #ff0000; }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .audio-container {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        #search {
+            margin: 20px 0;
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+
+        .song-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .song-list li {
+            background-color: #fff;
+            margin: 10px;
+            padding: 15px;
+            width: 200px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .song-list li:hover {
+            background-color: #dcdcdc;
+            transform: translateY(-5px);
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+        }
+
+        #visualizer {
+            margin-top: 30px;
+            width: 100%;
+            height: 300px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .color-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select, input[type="color"] {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        .control-wrapper {
+            position: relative;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #FFEB3B; /* Żółty kolor */
+            color: black; /* Czarny tekst */
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #FBC02D;
+        }
+
+        #colorful-toggle {
+            animation: rainbow-text 2s linear infinite; /* Tęcza nad Sosnowcem */
+        }
+    </style>
+<style type="text/css" id="operaUserStyle"></style><style type="text/css"></style></head>
+<body>
+
+    <h1>Ciulofon™ SCHLAGROFON EXPORT</h1>
+
+    <div class="controls-container">
+         <!-- Tęcza nad Sosnowcem będzie się świecić jak tęcza -->
+
+        <!-- Kolorowanie wizualizera -->
+        <div class="color-option">
+            
+            
+        </div>
+
+        <!-- Opcja "Colorful" -->
+        
+
+        <!-- Przycisk do odtwarzania losowego utworu -->
+        
+    </div>
+
+    <div class="container">
+        <!-- Audio Container -->
+        <div class="audio-container">
+            
+
+            <!-- Wizualizer dźwięku -->
+            
+            <ul id="song-list" class="song-list">
+                <!-- vol 3 --> 
+                <li data-src="omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>    
+                <li data-src="omsi2/Hahneberg.mp3">Hahneberg</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const searchInput = document.getElementById('search');
+        const songList = document.getElementById('song-list');
+        const audioPlayer = document.getElementById('audio-player');
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        const randomSongBtn = document.getElementById('random-song-btn');
+        
+        // Konfiguracja Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        // Zmienna kontrolująca efekt "Colorful"
+        let isColorful = false;
+
+        // Funkcja do losowania kolorów
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        // Funkcja do rysowania wizualizera
+        function drawVisualizer() {
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
+
+                let color;
+                if (isColorful) {
+                    color = getRandomColor(); // Losowy kolor w trybie "Colorful"
+                } else {
+                    const selectedColor = document.getElementById('color-select').value;
+                    color = selectedColor === 'random' ? getRandomColor() : selectedColor;
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+
+            requestAnimationFrame(drawVisualizer);
+        }
+
+        // Funkcja do filtrowania utworów
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const songs = songList.getElementsByTagName('li');
+            Array.from(songs).forEach(song => {
+                const songTitle = song.textContent.toLowerCase();
+                if (songTitle.includes(searchTerm)) {
+                    song.style.display = '';
+                } else {
+                    song.style.display = 'none';
+                }
+            });
+        });
+
+        // Funkcja do odtwarzania wybranego utworu
+        songList.addEventListener('click', function(event) {
+            const clickedSong = event.target;
+            if (clickedSong.tagName.toLowerCase() === 'li') {
+                const songSrc = clickedSong.getAttribute('data-src');
+                audioPlayer.src = songSrc;
+                audioPlayer.play();
+                audioContext.resume().then(() => {
+                    const source = audioContext.createMediaElementSource(audioPlayer);
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    drawVisualizer();
+                });
+            }
+        });
+
+        // Zmiana ustawienia opcji "Colorful"
+        document.getElementById('colorful-toggle').addEventListener('change', function() {
+            isColorful = this.checked;
+        });
+
+        // Funkcja do odtwarzania losowego utworu
+        randomSongBtn.addEventListener('click', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
+        // Funkcja do włączenia losowego utworu po zakończeniu obecnego
+        audioPlayer.addEventListener('ended', () => {
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const randomSong = songs[Math.floor(Math.random() * songs.length)];
+            const songSrc = randomSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        });
+
+        // Dostosowanie rozmiaru canvas
+        canvas.width = window.innerWidth - 40;
+        canvas.height = 300;
+    </script>
+
+
+
+</body></html>
