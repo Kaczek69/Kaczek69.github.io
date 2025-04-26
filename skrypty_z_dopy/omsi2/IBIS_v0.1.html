@@ -134,24 +134,15 @@
             animation: rainbow-text 2s linear infinite; /* Tęcza nad Sosnowcem */
         }
 
-        /* Ukrycie przycisku losowego odtwarzania */
         #random-song-btn {
-            display: none;
+            display: none; /* Przyciski ukryte */
         }
 
-        .navigation-btn {
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            background-color: #FFEB3B; /* Żółty kolor */
-            color: black; /* Czarny tekst */
-            border: none;
-            border-radius: 5px;
-            margin: 5px;
-        }
-
-        .navigation-btn:hover {
-            background-color: #FBC02D;
+        .song-navigation {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -185,10 +176,10 @@
             <input type="checkbox" id="colorful-toggle">
         </div>
 
-        <!-- Przyciski nawigacyjne do przewijania utworów -->
-        <div class="navigation-buttons">
-            <button class="navigation-btn" id="prev-song-btn">Poprzedni utwór</button>
-            <button class="navigation-btn" id="next-song-btn">Następny utwór</button>
+        <!-- Przyciski do przewijania utworów -->
+        <div class="song-navigation">
+            <button class="button" id="prev-song-btn">Poprzedni utwór</button>
+            <button class="button" id="next-song-btn">Następny utwór</button>
         </div>
     </div>
 
@@ -205,9 +196,9 @@
             <input type="text" id="search" placeholder="Wyszukaj utwór...">
 
             <ul id="song-list" class="song-list">
-                <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>    
-                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li> 
-                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>    
+             <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>    
+              <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li> 
+              <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>    
             </ul>
         </div>
     </div>
@@ -230,6 +221,8 @@
 
         // Zmienna kontrolująca efekt "Colorful"
         let isColorful = false;
+        let currentSongIndex = 0;
+        const songs = Array.from(songList.getElementsByTagName('li'));
 
         // Funkcja do losowania kolorów
         function getRandomColor() {
@@ -303,22 +296,18 @@
             isColorful = this.checked;
         });
 
-        // Funkcja do przewijania utworów w tył
+        // Funkcja do odtwarzania poprzedniego utworu
         prevSongBtn.addEventListener('click', () => {
-            const songs = Array.from(songList.getElementsByTagName('li'));
-            const currentSongIndex = songs.findIndex(song => song.getAttribute('data-src') === audioPlayer.src);
-            const prevSong = songs[(currentSongIndex - 1 + songs.length) % songs.length];
-            const songSrc = prevSong.getAttribute('data-src');
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            const songSrc = songs[currentSongIndex].getAttribute('data-src');
             audioPlayer.src = songSrc;
             audioPlayer.play();
         });
 
-        // Funkcja do przewijania utworów w przód
+        // Funkcja do odtwarzania następnego utworu
         nextSongBtn.addEventListener('click', () => {
-            const songs = Array.from(songList.getElementsByTagName('li'));
-            const currentSongIndex = songs.findIndex(song => song.getAttribute('data-src') === audioPlayer.src);
-            const nextSong = songs[(currentSongIndex + 1) % songs.length];
-            const songSrc = nextSong.getAttribute('data-src');
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            const songSrc = songs[currentSongIndex].getAttribute('data-src');
             audioPlayer.src = songSrc;
             audioPlayer.play();
         });
