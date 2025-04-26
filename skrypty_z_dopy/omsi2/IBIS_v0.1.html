@@ -74,6 +74,10 @@ const forwardStops = ["Bhf Falkensee", "Hannenberg", "Moritzstr"];
 let reversed = false;
 let currentIndex = 0;
 
+function sanitizeFileName(name) {
+  return name.replaceAll(" ", "%20") + ".mp3";
+}
+
 function getStops() {
   return reversed ? [...forwardStops].reverse() : forwardStops;
 }
@@ -83,7 +87,7 @@ function playCurrent() {
   const stop = stops[currentIndex];
   document.getElementById('screen').innerText = stop;
   const audio = document.getElementById('audioPlayer');
-  audio.src = `skrypty_z_dopy/omsi2/${stop}.mp3`;
+  audio.src = `skrypty_z_dopy/omsi2/${sanitizeFileName(stop)}`;
   audio.play();
 }
 
