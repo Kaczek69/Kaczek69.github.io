@@ -6,33 +6,65 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #000;
       text-align: center;
       padding: 40px;
+      color: #fff;
     }
+
+    h1 {
+      color: #00cc00;
+      font-size: 28px;
+      font-weight: bold;
+      margin-bottom: 30px;
+    }
+
     button {
       margin: 10px;
-      padding: 10px 20px;
+      padding: 10px 30px;
       font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
+      border: none;
+      border-radius: 8px;
     }
+
+    .btn-ruck {
+      background-color: #aaa;
+      color: black;
+    }
+
+    .btn-fort {
+      background-color: #3399ff;
+      color: black;
+    }
+
     audio {
       display: none;
     }
+
     #trackTitle {
       font-size: 24px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
+      background-color: #00cc00;
+      color: black;
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 3px solid #00cc00;
     }
   </style>
 </head>
 <body>
 
+  <h1>3 - BEHRINGER STRAßE &nbsp;&gt;&gt;&nbsp; IKEA FALKENREIHE</h1>
+
   <div id="trackTitle"></div>
 
   <div>
-    <button onclick="prevTrack()">⏮ Poprzedni</button>
-    <button onclick="nextTrack()">⏭ Następny</button>
+    <button class="btn-ruck" onclick="prevTrack()">Ruck</button>
+    <button class="btn-fort" onclick="nextTrack()">Fort</button>
   </div>
 
   <audio id="audioPlayer"></audio>
