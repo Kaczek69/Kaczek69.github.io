@@ -1,167 +1,153 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Linia 3 – IKEA FALKENDUPEN</title>
-  <style>
-    body {
-      font-family: monospace;
-      background: #111;
-      color: white;
-      text-align: center;
-      padding: 20px;
-      position: relative;
-    }
-    h1 {
-      margin-bottom: 20px;
-    }
-    #stops-list {
-      list-style: none;
-      padding: 0;
-      margin: 20px auto;
-      width: 80%;
-      max-width: 500px;
-    }
-    #stops-list li {
-      background: #00ff00;
-      color: black;
-      font-size: 24px;
-      padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background 0.3s;
-    }
-    #stops-list li:hover, #stops-list li.active {
-      background: #8f8;
-    }
-    .buttons {
-      display: flex;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
-    }
-    button {
-      font-size: 20px;
-      padding: 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      width: 100px;
-      height: 100px;
-    }
-    #prevBtn {
-      background: gray;
-      color: white;
-    }
-    #nextBtn {
-      background: blue;
-      color: white;
-    }
-    #changeRoute {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      font-size: 14px;
-      padding: 8px;
-      background: #444;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    audio {
-      margin-top: 20px;
-      width: 80%;
-      max-width: 500px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muzyczny Odtwarzacz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f0f0;
+            padding: 20px;
+        }
+        h1 {
+            font-size: 50px;
+            color: white; /* Ciulofon jest teraz biały */
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .audio-container {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+            align-items: center;
+        }
+
+        .song-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .song-list li {
+            background-color: #fff;
+            margin: 10px;
+            padding: 15px;
+            width: 200px;
+            cursor: pointer;
+            border-radius: 5px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .song-list li:hover {
+            background-color: #dcdcdc;
+            transform: translateY(-5px);
+        }
+
+        audio {
+            margin-top: 20px;
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #FFEB3B; /* Żółty kolor */
+            color: black; /* Czarny tekst */
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #FBC02D;
+        }
+    </style>
 </head>
 <body>
 
-  <h1>Linia 3 – <span id="direction">IKEA FALKENDUPEN</span></h1>
-  <button id="changeRoute">Zmiana trasy</button>
+    <h1>Ciulofon™ SCHLAGROFON EXPORT</h1>
 
-  <ul id="stops-list" class="stops-list">
-    <!-- Lista przystanków; nazwy pasują do podanych źródeł mp3 -->
-    <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>
-    <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
-    <li data-src="skrypty_z_dopy/omsi2/Moritzstr.mp3">Moritzstr</li>
-  </ul>
+    <div class="controls-container">
+        <!-- Przyciski przewijania w przód i w tył -->
+        <div class="navigation-buttons">
+            <button class="button" id="prev-song-btn">Poprzedni utwór</button>
+            <button class="button" id="next-song-btn">Następny utwór</button>
+        </div>
+    </div>
 
-  <div class="buttons">
-    <button id="prevBtn">Ruck</button>
-    <button id="nextBtn">Fort</button>
-  </div>
+    <div class="container">
+        <!-- Audio Container -->
+        <div class="audio-container">
+            <audio id="audio-player" controls>
+                Twoja przeglądarka nie wspiera elementu audio.
+            </audio>
 
-  <!-- Użyłem atrybutu controls do testów (możesz go usunąć, gdy wszystko zadziała) -->
-  <audio id="audioPlayer" preload="auto" controls></audio>
+            <ul id="song-list" class="song-list">
+                <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>    
+                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
+                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
+            </ul>
+        </div>
+    </div>
 
-  <script>
-    // Pobieramy wszystkie elementy li z listy przystanków
-    let stopsArray = Array.from(document.querySelectorAll("#stops-list li"));
-    let currentIndex = 0;
-    let reversed = false; // Zmienna sterująca kolejnością
+    <script>
+        const songList = document.getElementById('song-list');
+        const audioPlayer = document.getElementById('audio-player');
+        const prevSongBtn = document.getElementById('prev-song-btn');
+        const nextSongBtn = document.getElementById('next-song-btn');
 
-    const audioPlayer = document.getElementById("audioPlayer");
-    const directionDisplay = document.getElementById("direction");
+        let currentSongIndex = 0;
+        const songs = Array.from(songList.getElementsByTagName('li'));
 
-    // Funkcja odtwarzająca dany przystanek
-    function playStop(index) {
-      if (index < 0 || index >= stopsArray.length) return;
-      // Usuwamy klasę aktywności ze wszystkich elementów
-      stopsArray.forEach(item => item.classList.remove("active"));
-      
-      const stopItem = stopsArray[index];
-      stopItem.classList.add("active");
-      // Ustawiamy źródło audio z atrybutu data-src i próbujemy odtworzyć
-      audioPlayer.src = stopItem.dataset.src;
-      audioPlayer.play().catch(err => console.error("Błąd odtwarzania:", err));
-    }
+        // Funkcja do odtwarzania wybranego utworu
+        function playSong(index) {
+            const songSrc = songs[index].getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
+        }
 
-    // Dodajemy obsługę kliknięć dla elementów li – dzięki temu użytkownik może wybrać dowolny przystanek
-    stopsArray.forEach((item, idx) => {
-      item.addEventListener("click", () => {
-        currentIndex = idx;
-        playStop(currentIndex);
-      });
-    });
+        // Funkcja do przejścia do poprzedniego utworu
+        prevSongBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+            playSong(currentSongIndex);
+        });
 
-    // Obsługa przycisku "Fort" - następny przystanek
-    document.getElementById("nextBtn").addEventListener("click", () => {
-      if (currentIndex < stopsArray.length - 1) {
-        currentIndex++;
-        playStop(currentIndex);
-      }
-    });
+        // Funkcja do przejścia do następnego utworu
+        nextSongBtn.addEventListener('click', () => {
+            currentSongIndex = (currentSongIndex + 1) % songs.length;
+            playSong(currentSongIndex);
+        });
 
-    // Obsługa przycisku "Ruck" - poprzedni przystanek
-    document.getElementById("prevBtn").addEventListener("click", () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        playStop(currentIndex);
-      }
-    });
-
-    // Obsługa przycisku "Zmiana trasy", który odwraca kolejność listy
-    document.getElementById("changeRoute").addEventListener("click", () => {
-      reversed = !reversed;
-      // Odwracamy kolejność tablicy
-      stopsArray.reverse();
-      // Czyścimy ul i dodajemy elementy w nowej kolejności
-      const stopsList = document.getElementById("stops-list");
-      stopsList.innerHTML = "";
-      stopsArray.forEach(item => stopsList.appendChild(item));
-      // Zmiana nazwy kierunku
-      directionDisplay.innerText = reversed ? "CIpenberger Str" : "IKEA FALKENDUPEN";
-      currentIndex = 0;
-      playStop(currentIndex);
-    });
-
-    // Na starcie odtwarzamy pierwszy przystanek
-    window.addEventListener("DOMContentLoaded", () => {
-      playStop(currentIndex);
-    });
-  </script>
+        // Odtwarzanie pierwszego utworu na starcie
+        playSong(currentSongIndex);
+    </script>
 
 </body>
 </html>
