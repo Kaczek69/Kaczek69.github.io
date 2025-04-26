@@ -20,13 +20,19 @@
     }
 
     button {
-      margin: 10px;
-      padding: 10px 30px;
-      font-size: 18px;
+      width: 100px;
+      height: 100px;
+      font-size: 22px;
       font-weight: bold;
       cursor: pointer;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
+      margin: 20px;
+      transition: transform 0.1s ease-in-out;
+    }
+
+    button:hover {
+      transform: scale(1.05);
     }
 
     .btn-ruck {
@@ -75,7 +81,7 @@
 
   <script>
     const playlist = [
-      "omsi2/Neusted/BEHRINGER STRAßE >>> IKEA FALKENREIHE.mp3",
+      "omsi2/Neusted/Beringer strße",
       "omsi2/Neusted/Nürnberger Straße.mp3",
       "omsi2/Neusted/Glückstedter Weg.mp3",
       "omsi2/Neusted/Warnemünder Weg.mp3",
