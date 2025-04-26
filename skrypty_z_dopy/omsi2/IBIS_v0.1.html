@@ -10,21 +10,36 @@
       color: white;
       text-align: center;
       padding: 20px;
+      position: relative;
     }
-    #screen {
-      background: #00ff00;
-      color: black;
-      font-size: 28px;
-      padding: 20px;
+    h1 {
+      margin-bottom: 20px;
+    }
+    #stops-list {
+      list-style: none;
+      padding: 0;
       margin: 20px auto;
       width: 80%;
       max-width: 500px;
+    }
+    #stops-list li {
+      background: #00ff00;
+      color: black;
+      font-size: 24px;
+      padding: 15px;
+      margin-bottom: 10px;
       border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    #stops-list li:hover, #stops-list li.active {
+      background: #8f8;
     }
     .buttons {
       display: flex;
       justify-content: center;
       gap: 20px;
+      margin-top: 20px;
     }
     button {
       font-size: 20px;
@@ -54,78 +69,99 @@
       border: none;
       cursor: pointer;
     }
+    audio {
+      margin-top: 20px;
+      width: 80%;
+      max-width: 500px;
+    }
   </style>
 </head>
 <body>
 
-<h1>Linia 3 – <span id="direction">IKEA FALKENDUPEN</span></h1>
-<button id="changeRoute">Zmiana trasy</button>
-<div id="screen"></div>
+  <h1>Linia 3 – <span id="direction">IKEA FALKENDUPEN</span></h1>
+  <button id="changeRoute">Zmiana trasy</button>
 
-<div class="buttons">
-  <button id="prevBtn">Ruck</button>
-  <button id="nextBtn">Fort</button>
-</div>
+  <ul id="stops-list" class="stops-list">
+    <!-- Lista przystanków; nazwy pasują do podanych źródeł mp3 -->
+    <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>
+    <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
+    <li data-src="skrypty_z_dopy/omsi2/Moritzstr.mp3">Moritzstr</li>
+  </ul>
 
-<audio id="audioPlayer" preload="auto"></audio>
+  <div class="buttons">
+    <button id="prevBtn">Ruck</button>
+    <button id="nextBtn">Fort</button>
+  </div>
 
-<script>
-const forwardStops = ["Bhf Falkensee", "Hannenberg", "Moritzstr"];
-let reversed = false;
-let currentIndex = 0;
+  <!-- Użyłem atrybutu controls do testów (możesz go usunąć, gdy wszystko zadziała) -->
+  <audio id="audioPlayer" preload="auto" controls></audio>
 
-/* Używamy encodeURIComponent do poprawnego kodowania nazwy pliku */
-function sanitizeFileName(name) {
-  return encodeURIComponent(name) + ".mp3";
-}
+  <script>
+    // Pobieramy wszystkie elementy li z listy przystanków
+    let stopsArray = Array.from(document.querySelectorAll("#stops-list li"));
+    let currentIndex = 0;
+    let reversed = false; // Zmienna sterująca kolejnością
 
-function getStops() {
-  return reversed ? [...forwardStops].reverse() : forwardStops;
-}
+    const audioPlayer = document.getElementById("audioPlayer");
+    const directionDisplay = document.getElementById("direction");
 
-function playCurrent() {
-  const stops = getStops();
-  const stop = stops[currentIndex];
-  document.getElementById('screen').innerText = stop;
-  const audio = document.getElementById('audioPlayer');
-  // Dodanie "./" gwarantuje, że ścieżka jest względna względem pliku HTML
-  audio.src = `./skrypty_z_dopy/omsi2/${sanitizeFileName(stop)}`;
-  // Próba odtworzenia dźwięku i przechwycenie ewentualnego błędu (np. z powodu braku interakcji)
-  audio.play().catch(err => {
-    console.error("Błąd odtwarzania:", err);
-  });
-}
+    // Funkcja odtwarzająca dany przystanek
+    function playStop(index) {
+      if (index < 0 || index >= stopsArray.length) return;
+      // Usuwamy klasę aktywności ze wszystkich elementów
+      stopsArray.forEach(item => item.classList.remove("active"));
+      
+      const stopItem = stopsArray[index];
+      stopItem.classList.add("active");
+      // Ustawiamy źródło audio z atrybutu data-src i próbujemy odtworzyć
+      audioPlayer.src = stopItem.dataset.src;
+      audioPlayer.play().catch(err => console.error("Błąd odtwarzania:", err));
+    }
 
-document.getElementById('nextBtn').onclick = () => {
-  const stops = getStops();
-  if (currentIndex < stops.length - 1) {
-    currentIndex++;
-    playCurrent();
-  }
-};
+    // Dodajemy obsługę kliknięć dla elementów li – dzięki temu użytkownik może wybrać dowolny przystanek
+    stopsArray.forEach((item, idx) => {
+      item.addEventListener("click", () => {
+        currentIndex = idx;
+        playStop(currentIndex);
+      });
+    });
 
-document.getElementById('prevBtn').onclick = () => {
-  if (currentIndex > 0) {
-    currentIndex--;
-    playCurrent();
-  }
-};
+    // Obsługa przycisku "Fort" - następny przystanek
+    document.getElementById("nextBtn").addEventListener("click", () => {
+      if (currentIndex < stopsArray.length - 1) {
+        currentIndex++;
+        playStop(currentIndex);
+      }
+    });
 
-document.getElementById('changeRoute').onclick = () => {
-  reversed = !reversed;
-  currentIndex = 0;
-  document.getElementById('direction').innerText = reversed ? "CIpenberger Str" : "IKEA FALKENDUPEN";
-  playCurrent();
-};
+    // Obsługa przycisku "Ruck" - poprzedni przystanek
+    document.getElementById("prevBtn").addEventListener("click", () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        playStop(currentIndex);
+      }
+    });
 
-/* Rozpoczęcie odtwarzania po pierwszej interakcji użytkownika - pomaga ominąć ograniczenia autoplay */
-document.addEventListener('DOMContentLoaded', () => {
-  document.body.addEventListener('click', function initAudio(){
-    playCurrent();
-    document.body.removeEventListener('click', initAudio);
-  });
-});
-</script>
+    // Obsługa przycisku "Zmiana trasy", który odwraca kolejność listy
+    document.getElementById("changeRoute").addEventListener("click", () => {
+      reversed = !reversed;
+      // Odwracamy kolejność tablicy
+      stopsArray.reverse();
+      // Czyścimy ul i dodajemy elementy w nowej kolejności
+      const stopsList = document.getElementById("stops-list");
+      stopsList.innerHTML = "";
+      stopsArray.forEach(item => stopsList.appendChild(item));
+      // Zmiana nazwy kierunku
+      directionDisplay.innerText = reversed ? "CIpenberger Str" : "IKEA FALKENDUPEN";
+      currentIndex = 0;
+      playStop(currentIndex);
+    });
+
+    // Na starcie odtwarzamy pierwszy przystanek
+    window.addEventListener("DOMContentLoaded", () => {
+      playStop(currentIndex);
+    });
+  </script>
 
 </body>
 </html>
