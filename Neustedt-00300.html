@@ -15,6 +15,12 @@
             color: white;
             font-family: Arial, sans-serif;
         }
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px; /* odstęp między przyciskami */
+            align-items: center;
+        }
         a {
             text-decoration: none;
         }
@@ -33,11 +39,13 @@
     </style>
 </head>
 <body>
-    <a href="Neustedt-00300-1.html">
-        <button>Ikea Falkenreihe</button>
-    </a>
-  <a href="Neustedt-00300-2.html">
-        <button>Behringer Straße</button>
-    </a>
+    <div class="button-container">
+        <a href="Neustedt-00300-1.html">
+            <button>Ikea Falkenreihe</button>
+        </a>
+        <a href="Neustedt-00300-2.html">
+            <button>Behringer Straße</button>
+        </a>
+    </div>
 </body>
 </html>
