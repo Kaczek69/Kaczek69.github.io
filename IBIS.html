@@ -17,26 +17,27 @@
       cursor: pointer;
     }
     audio {
-      margin-top: 20px;
-      width: 100%;
-      max-width: 600px;
+      display: none;
+    }
+    #trackTitle {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 20px;
     }
   </style>
 </head>
 <body>
-  <h1>Odtwarzacz MP3 z katalogu <code>omsi2/</code></h1>
+
+  <div id="trackTitle"></div>
 
   <div>
     <button onclick="prevTrack()">⏮ Poprzedni</button>
     <button onclick="nextTrack()">⏭ Następny</button>
   </div>
 
-  <audio id="audioPlayer" controls>
-    Twój przeglądarka nie obsługuje elementu audio.
-  </audio>
+  <audio id="audioPlayer"></audio>
 
   <script>
-    // Lista plików mp3 - podaj tu swoje pliki
     const playlist = [
       "omsi2/Moritzstr.mp3",
       "omsi2/Hahneberg.mp3",
@@ -45,10 +46,18 @@
 
     let currentIndex = 0;
     const player = document.getElementById("audioPlayer");
+    const titleElement = document.getElementById("trackTitle");
+
+    function updateTitle(path) {
+      const filename = path.split("/").pop().replace(".mp3", "");
+      titleElement.textContent = filename;
+    }
 
     function loadTrack(index) {
       if (index >= 0 && index < playlist.length) {
-        player.src = playlist[index];
+        const track = playlist[index];
+        player.src = track;
+        updateTitle(track);
         player.play();
       }
     }
@@ -63,7 +72,6 @@
       loadTrack(currentIndex);
     }
 
-    // Załaduj pierwszy utwór na start
     loadTrack(currentIndex);
   </script>
 </body>
