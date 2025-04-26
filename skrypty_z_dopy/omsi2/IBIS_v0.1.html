@@ -16,6 +16,17 @@
             color: white; /* Ciulofon jest teraz biały */
         }
 
+        @keyframes rainbow-text {
+            0% { color: #ff0000; }
+            14% { color: #ff7f00; }
+            28% { color: #ffff00; }
+            42% { color: #00ff00; }
+            57% { color: #0000ff; }
+            71% { color: #4b0082; }
+            85% { color: #8b00ff; }
+            100% { color: #ff0000; }
+        }
+
         .container {
             display: flex;
             flex-direction: column;
@@ -35,6 +46,13 @@
             gap: 20px;
             margin-bottom: 30px;
             align-items: center;
+        }
+
+        #search {
+            margin: 20px 0;
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
         }
 
         .song-list {
@@ -68,10 +86,33 @@
             border-radius: 10px;
         }
 
-        .navigation-buttons {
+        #visualizer {
+            margin-top: 30px;
+            width: 100%;
+            height: 300px;
+            background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .color-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        select, input[type="color"] {
+            padding: 5px;
+            font-size: 16px;
+        }
+
+        .control-wrapper {
+            position: relative;
+            width: 100%;
             display: flex;
             justify-content: center;
-            gap: 20px;
+            align-items: center;
+            flex-direction: column;
         }
 
         .button {
@@ -88,6 +129,30 @@
         .button:hover {
             background-color: #FBC02D;
         }
+
+        #colorful-toggle {
+            animation: rainbow-text 2s linear infinite; /* Tęcza nad Sosnowcem */
+        }
+
+        /* Ukrycie przycisku losowego odtwarzania */
+        #random-song-btn {
+            display: none;
+        }
+
+        .navigation-btn {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #FFEB3B; /* Żółty kolor */
+            color: black; /* Czarny tekst */
+            border: none;
+            border-radius: 5px;
+            margin: 5px;
+        }
+
+        .navigation-btn:hover {
+            background-color: #FBC02D;
+        }
     </style>
 </head>
 <body>
@@ -95,10 +160,35 @@
     <h1>Ciulofon™ SCHLAGROFON EXPORT</h1>
 
     <div class="controls-container">
-        <!-- Przyciski przewijania w przód i w tył -->
+        <h3 id="colorful-toggle">wiocha edition</h3> <!-- Tęcza nad Sosnowcem będzie się świecić jak tęcza -->
+
+        <!-- Kolorowanie wizualizera -->
+        <div class="color-option">
+            <label for="color-select">Wybierz kolor:</label>
+            <select id="color-select">
+                <option value="red">Czerwony</option>
+                <option value="green">Zielony</option>
+                <option value="blue">Niebieski</option>
+                <option value="yellow">Żółty</option>
+                <option value="purple">Fioletowy</option>
+                <option value="pink">Różowy</option>
+                <option value="orange">Pomarańczowy</option>
+                <option value="cyan">Cyjan</option>
+                <option value="magenta">Magenta</option>
+                <option value="lime">Limonkowy</option>
+            </select>
+        </div>
+
+        <!-- Opcja "Colorful" -->
+        <div class="color-option">
+            <label for="colorful-toggle">tęcza nad sosnowcem:</label>
+            <input type="checkbox" id="colorful-toggle">
+        </div>
+
+        <!-- Przyciski nawigacyjne do przewijania utworów -->
         <div class="navigation-buttons">
-            <button class="button" id="prev-song-btn">Poprzedni utwór</button>
-            <button class="button" id="next-song-btn">Następny utwór</button>
+            <button class="navigation-btn" id="prev-song-btn">Poprzedni utwór</button>
+            <button class="navigation-btn" id="next-song-btn">Następny utwór</button>
         </div>
     </div>
 
@@ -109,44 +199,133 @@
                 Twoja przeglądarka nie wspiera elementu audio.
             </audio>
 
+            <!-- Wizualizer dźwięku -->
+            <canvas id="visualizer"></canvas>
+
+            <input type="text" id="search" placeholder="Wyszukaj utwór...">
+
             <ul id="song-list" class="song-list">
                 <li data-src="skrypty_z_dopy/omsi2/Bhf Falkensee.mp3">Bhf Falkensee</li>    
-                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
-                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>
+                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li> 
+                <li data-src="skrypty_z_dopy/omsi2/Hahneberg.mp3">Hahneberg</li>    
             </ul>
         </div>
     </div>
 
     <script>
+        const searchInput = document.getElementById('search');
         const songList = document.getElementById('song-list');
         const audioPlayer = document.getElementById('audio-player');
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
         const prevSongBtn = document.getElementById('prev-song-btn');
         const nextSongBtn = document.getElementById('next-song-btn');
+        
+        // Konfiguracja Web Audio API
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const analyser = audioContext.createAnalyser();
+        analyser.fftSize = 256;
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
 
-        let currentSongIndex = 0;
-        const songs = Array.from(songList.getElementsByTagName('li'));
+        // Zmienna kontrolująca efekt "Colorful"
+        let isColorful = false;
 
-        // Funkcja do odtwarzania wybranego utworu
-        function playSong(index) {
-            const songSrc = songs[index].getAttribute('data-src');
-            audioPlayer.src = songSrc;
-            audioPlayer.play();
+        // Funkcja do losowania kolorów
+        function getRandomColor() {
+            const letters = '0123456789ABCDEF';
+            let color = '#';
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
         }
 
-        // Funkcja do przejścia do poprzedniego utworu
+        // Funkcja do rysowania wizualizera
+        function drawVisualizer() {
+            analyser.getByteFrequencyData(dataArray);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let barHeight;
+            let x = 0;
+
+            for (let i = 0; i < bufferLength; i++) {
+                barHeight = dataArray[i];
+
+                let color;
+                if (isColorful) {
+                    color = getRandomColor(); // Losowy kolor w trybie "Colorful"
+                } else {
+                    const selectedColor = document.getElementById('color-select').value;
+                    color = selectedColor === 'random' ? getRandomColor() : selectedColor;
+                }
+
+                ctx.fillStyle = color;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+
+            requestAnimationFrame(drawVisualizer);
+        }
+
+        // Funkcja do filtrowania utworów
+        searchInput.addEventListener('input', function() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const songs = songList.getElementsByTagName('li');
+            Array.from(songs).forEach(song => {
+                const songTitle = song.textContent.toLowerCase();
+                if (songTitle.includes(searchTerm)) {
+                    song.style.display = '';
+                } else {
+                    song.style.display = 'none';
+                }
+            });
+        });
+
+        // Funkcja do odtwarzania wybranego utworu
+        songList.addEventListener('click', function(event) {
+            const clickedSong = event.target;
+            if (clickedSong.tagName.toLowerCase() === 'li') {
+                const songSrc = clickedSong.getAttribute('data-src');
+                audioPlayer.src = songSrc;
+                audioPlayer.play();
+                audioContext.resume().then(() => {
+                    const source = audioContext.createMediaElementSource(audioPlayer);
+                    source.connect(analyser);
+                    analyser.connect(audioContext.destination);
+                    drawVisualizer();
+                });
+            }
+        });
+
+        // Zmiana ustawienia opcji "Colorful"
+        document.getElementById('colorful-toggle').addEventListener('change', function() {
+            isColorful = this.checked;
+        });
+
+        // Funkcja do przewijania utworów w tył
         prevSongBtn.addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex - 1 + songs.length) % songs.length;
-            playSong(currentSongIndex);
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const currentSongIndex = songs.findIndex(song => song.getAttribute('data-src') === audioPlayer.src);
+            const prevSong = songs[(currentSongIndex - 1 + songs.length) % songs.length];
+            const songSrc = prevSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
         });
 
-        // Funkcja do przejścia do następnego utworu
+        // Funkcja do przewijania utworów w przód
         nextSongBtn.addEventListener('click', () => {
-            currentSongIndex = (currentSongIndex + 1) % songs.length;
-            playSong(currentSongIndex);
+            const songs = Array.from(songList.getElementsByTagName('li'));
+            const currentSongIndex = songs.findIndex(song => song.getAttribute('data-src') === audioPlayer.src);
+            const nextSong = songs[(currentSongIndex + 1) % songs.length];
+            const songSrc = nextSong.getAttribute('data-src');
+            audioPlayer.src = songSrc;
+            audioPlayer.play();
         });
 
-        // Odtwarzanie pierwszego utworu na starcie
-        playSong(currentSongIndex);
+        // Dostosowanie rozmiaru canvas
+        canvas.width = window.innerWidth - 40;
+        canvas.height = 300;
     </script>
 
 </body>
