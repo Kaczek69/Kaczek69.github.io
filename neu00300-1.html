@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>Odtwarzacz MP3 z katalogu omsi2</title>
+  <title>IBIS</title> 
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -20,13 +20,13 @@
     }
 
     button {
-      width: 100px;
-      height: 100px;
-      font-size: 22px;
+      width: 150px;
+      height: 150px;
+      font-size: 32px;
       font-weight: bold;
       cursor: pointer;
       border: none;
-      border-radius: 12px;
+      border-radius: 16px;
       margin: 20px;
       transition: transform 0.1s ease-in-out;
     }
@@ -42,7 +42,7 @@
 
     .btn-fort {
       background-color: #3399ff;
-      color: black;
+      color: white;  /* Zmieniony na biały tekst */
     }
 
     audio {
@@ -64,6 +64,33 @@
       box-shadow: 0 0 20px #00ff00;
       font-family: 'Courier New', monospace;
     }
+
+    .nav-buttons {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      z-index: 999;
+    }
+
+    .btn-nav {
+      background-color: yellow;
+      color: black;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 30px;
+      cursor: pointer;
+      transition: transform 0.1s ease-in-out;
+    }
+
+    .btn-nav:hover {
+      transform: scale(1.05);
+    }
   </style>
 </head>
 <body>
@@ -73,11 +100,17 @@
   <div id="trackTitle"></div>
 
   <div>
-    <button class="btn-ruck" onclick="prevTrack()">Ruck</button>
+    <button class="btn-ruck" onclick="prevTrack()">Rück</button>
     <button class="btn-fort" onclick="nextTrack()">Fort</button>
   </div>
 
   <audio id="audioPlayer"></audio>
+
+  <div class="nav-buttons">
+    <a href="wybór-mapy.html"><button class="btn-nav">MAPA</button></a>
+    <a href="neu-linie.html"><button class="btn-nav">LINIA</button></a>
+    <a href="neu-00300.html"><button class="btn-nav">KIERUNEK</button></a>
+  </div>
 
   <script>
     const playlist = [
