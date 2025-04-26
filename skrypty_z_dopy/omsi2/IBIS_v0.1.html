@@ -67,15 +67,16 @@
   <button id="nextBtn">Fort</button>
 </div>
 
-<audio id="audioPlayer"></audio>
+<audio id="audioPlayer" preload="auto"></audio>
 
 <script>
 const forwardStops = ["Bhf Falkensee", "Hannenberg", "Moritzstr"];
 let reversed = false;
 let currentIndex = 0;
 
+/* Używamy encodeURIComponent do poprawnego kodowania nazwy pliku */
 function sanitizeFileName(name) {
-  return name.replaceAll(" ", "%20") + ".mp3";
+  return encodeURIComponent(name) + ".mp3";
 }
 
 function getStops() {
@@ -87,8 +88,12 @@ function playCurrent() {
   const stop = stops[currentIndex];
   document.getElementById('screen').innerText = stop;
   const audio = document.getElementById('audioPlayer');
-  audio.src = `skrypty_z_dopy/omsi2/${sanitizeFileName(stop)}`;
-  audio.play();
+  // Dodanie "./" gwarantuje, że ścieżka jest względna względem pliku HTML
+  audio.src = `./skrypty_z_dopy/omsi2/${sanitizeFileName(stop)}`;
+  // Próba odtworzenia dźwięku i przechwycenie ewentualnego błędu (np. z powodu braku interakcji)
+  audio.play().catch(err => {
+    console.error("Błąd odtwarzania:", err);
+  });
 }
 
 document.getElementById('nextBtn').onclick = () => {
@@ -113,8 +118,13 @@ document.getElementById('changeRoute').onclick = () => {
   playCurrent();
 };
 
-// Start od razu
-playCurrent();
+/* Rozpoczęcie odtwarzania po pierwszej interakcji użytkownika - pomaga ominąć ograniczenia autoplay */
+document.addEventListener('DOMContentLoaded', () => {
+  document.body.addEventListener('click', function initAudio(){
+    playCurrent();
+    document.body.removeEventListener('click', initAudio);
+  });
+});
 </script>
 
 </body>
