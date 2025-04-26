@@ -1,40 +1,71 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>linie</title>
-    <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: black;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-        a {
-            text-decoration: none;
-        }
-        button {
-            background-color: yellow;
-            border: none;
-            padding: 20px 40px;
-            font-size: 24px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: darkorange;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Przyciski - Maksymalnie 3 w rzędzie</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 10px; /* odstęp między przyciskami */
+    }
+    a {
+      text-decoration: none;
+    }
+    button {
+      background-color: yellow;
+      border: none;
+      padding: 20px 40px;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: darkorange;
+    }
+  </style>
 </head>
 <body>
-    <a href="Neustedt-00300.html">
-        <button>3</button>
+  <div class="button-container">
+    <a href="Neustedt-00100.html">
+      <button>1</button>
     </a>
+    <a href="Neustedt-00200.html">
+      <button>2</button>
+    </a>
+    <a href="Neustedt-10000.html">
+      <button>100</button>
+      </a>
+    <a href="Neustedt-00300.html">
+      <button>3</button>
+    </a>
+    <a href="Neustedt-00400.html">
+      <button>4</button>
+    </a>
+    <a href="Neustedt-80100.html">
+      <button>801</button>
+    </a>
+    <a href="Neustedt-00500.html">
+      <button>5</button>
+    </a>
+    <a href="Neustedt-00600.html">
+      <button>6</button>
+    </a>
+    <a href="Neustedt-80200.html">
+      <button>802</button>
+    </a>
+  </div>
 </body>
 </html>
