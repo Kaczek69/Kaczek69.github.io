@@ -10,28 +10,24 @@
       text-align: center;
       padding: 40px;
       color: #fff;
+      margin: 0;
     }
-
     h1 {
-      color: #00cc00;
-      font-size: 28px;
+      color: yellow;
+      font-size: 32px;
       font-weight: bold;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
     }
-
-    /* Ogólne przyciski */
     button {
       font-family: inherit;
       cursor: pointer;
       border: none;
       transition: transform 0.1s ease-in-out;
     }
-
     button:hover {
       transform: scale(1.05);
     }
-
-    /* Przyciski Rück i Fort */
     .btn-ruck, .btn-fort {
       width: 150px;
       height: 150px;
@@ -40,18 +36,14 @@
       border-radius: 16px;
       margin: 20px;
     }
-
     .btn-ruck {
       background-color: #aaa;
       color: black;
     }
-
     .btn-fort {
       background-color: #3399ff;
       color: white;
     }
-
-    /* Nawigacja */
     .nav-buttons {
       position: fixed;
       bottom: 20px;
@@ -62,22 +54,6 @@
       align-items: center;
       z-index: 999;
     }
-
-    .nav-info {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 80px;
-      margin-bottom: 8px;
-    }
-
-    .info-text {
-      font-size: 20px;
-      font-style: italic;
-      color: yellow;
-    }
-
-    /* Modyfikacja przycisków nawigacyjnych – przyciski rozciągnięte, bez odstępów */
     .nav-btns {
       display: flex;
       width: 100%;
@@ -85,12 +61,10 @@
       gap: 0;
       margin: 0 auto;
     }
-
     .nav-btns a {
       flex: 1;
       text-decoration: none;
     }
-
     .btn-nav {
       background-color: yellow;
       color: black;
@@ -102,24 +76,17 @@
       border: 1px solid #fff;
       border-radius: 0;
     }
-
-    /* Aby zachować lekko zaokrąglone krawędzie po obu stronach */
     .nav-btns a:first-child .btn-nav {
       border-top-left-radius: 6px;
       border-bottom-left-radius: 6px;
     }
-
     .nav-btns a:last-child .btn-nav {
       border-top-right-radius: 6px;
       border-bottom-right-radius: 6px;
     }
-
-    /* Audio player ukryty */
     audio {
       display: none;
     }
-
-    /* Tytuł utworu */
     #trackTitle {
       font-size: 28px;
       font-weight: bold;
@@ -135,38 +102,51 @@
       box-shadow: 0 0 20px #00ff00;
       font-family: 'Courier New', monospace;
     }
+    .info-container {
+      position: fixed;
+      bottom: 90px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+    .info-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: yellow;
+      font-family: 'Courier New', monospace;
+    }
   </style>
 </head>
 <body>
-
-  <h1>3 - BEHRINGER STRAßE &nbsp;&gt;&gt;&nbsp; IKEA FALKENREIHE</h1>
-
+  <h1>3 - Behringer Straße &nbsp;&gt;&gt;&nbsp; IKEA Falkenreihe</h1>
   <div id="trackTitle"></div>
-
   <div>
     <button class="btn-ruck" onclick="prevTrack()"><strong>Rück</strong></button>
     <button class="btn-fort" onclick="nextTrack()"><strong>Fort</strong></button>
   </div>
-
   <audio id="audioPlayer"></audio>
 
+  <div class="info-container">
+    <span class="info-text" id="mapInfo"></span>
+    <span class="info-text" id="lineInfo"></span>
+    <span class="info-text" id="directionInfo"></span>
+  </div>
+
   <div class="nav-buttons">
-    <div class="nav-info">
-      <div class="info-text" id="mapInfo"></div>
-      <div class="info-text" id="lineInfo"></div>
-      <div class="info-text" id="directionInfo"></div>
-    </div>
     <div class="nav-btns">
       <a href="wybór-mapy.html"><button class="btn-nav">MAPA</button></a>
-      <a href="neu-linie.html"><button class="btn-nav">LINIA</button></a>
-      <a href="neu-00300.html"><button class="btn-nav">KIERUNEK</button></a>
+      <a href="Neustedt-00300.html"><button class="btn-nav">LINIA</button></a>
+      <a href="Neustedt-00300-1.html"><button class="btn-nav">KIERUNEK</button></a>
     </div>
   </div>
 
   <script>
     // Playlista utworów
     const playlist = [
-      "omsi2/Neusted/Beringer strße",
+      "omsi2/Neusted/Behringer Straße.mp3",
       "omsi2/Neusted/Nürnberger Straße.mp3",
       "omsi2/Neusted/Glückstedter Weg.mp3",
       "omsi2/Neusted/Warnemünder Weg.mp3",
@@ -179,7 +159,7 @@
       "omsi2/Neusted/Auf dem Sülzbrack.mp3",
       "omsi2/Neusted/Mühlenkamp.mp3",
       "omsi2/Neusted/Halskestieg.mp3",
-      "omsi2/Neusted/IKEA Falkenreihe.mp3",
+      "omsi2/Neusted/IKEA Falkenreihe.mp3"
     ];
 
     let currentIndex = 0;
@@ -212,7 +192,6 @@
 
     loadTrack(currentIndex);
 
-    // Ustawianie mapy, linii i kierunku z nazwy pliku
     function setInfos() {
       const pageName = window.location.pathname.split("/").pop().replace(".html", "");
       const parts = pageName.split("-");
@@ -220,22 +199,22 @@
       const linePart = parts[1] || "00000";
       const directionPart = parts[2] || "0";
 
-      let lineNumber = "";
-      if (linePart.startsWith("0")) {
-        // Jeśli zaczyna się od 0, np. 00500 -> linia 5
-        lineNumber = parseInt(linePart.substring(0, 2), 10);
-        if (lineNumber === 0) {
-          lineNumber = parseInt(linePart.substring(1, 3), 10);
-        }
-      } else {
-        // Normalnie np. 55500 -> linia 555
-        lineNumber = parseInt(linePart.substring(0, 3), 10);
-      }
-
       document.getElementById("mapInfo").textContent = mapName;
-      // Dodaje pełny kod linii w nawiasie, np.: 3 (00300)
-      document.getElementById("lineInfo").textContent = lineNumber + " (" + linePart + ")";
+      document.getElementById("lineInfo").textContent = linePart;
       document.getElementById("directionInfo").textContent = directionPart;
+
+      // Poprawione generowanie linków:
+      const mapaLinia = `${mapName}-linie.html`;  // zawsze "-linie"
+      const mapaKierunek = `${mapName}-${linePart}.html`;  // mapa + linia
+
+      const liniaLink = document.querySelector('a[href="Neustedt-00300.html"]');
+      if (liniaLink) {
+        liniaLink.href = mapaLinia;
+      }
+      const kierunekLink = document.querySelector('a[href="Neustedt-00300-1.html"]');
+      if (kierunekLink) {
+        kierunekLink.href = mapaKierunek;
+      }
     }
 
     setInfos();
