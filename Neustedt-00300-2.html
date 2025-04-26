@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>IBIS</title>
+  <style>
+    /* Twój CSS bez zmian */
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      text-align: center;
+      padding: 40px;
+      color: #fff;
+    }
+    h1 { color: #00cc00; font-size: 28px; font-weight: bold; margin-bottom: 30px; }
+    button { font-family: inherit; cursor: pointer; border: none; transition: transform 0.1s ease-in-out; }
+    button:hover { transform: scale(1.05); }
+    .btn-ruck, .btn-fort { width: 150px; height: 150px; font-size: 32px; font-weight: bold; border-radius: 16px; margin: 20px; }
+    .btn-ruck { background-color: #aaa; color: black; }
+    .btn-fort { background-color: #3399ff; color: white; }
+    .nav-buttons { position: fixed; bottom: 20px; left: 0; width: 100%; display: flex; flex-direction: column; align-items: center; z-index: 999; }
+    .nav-info { display: flex; align-items: center; justify-content: center; gap: 80px; margin-bottom: 8px; }
+    .info-text { font-size: 20px; font-style: italic; color: yellow; }
+    .nav-btns { display: flex; width: 100%; max-width: 600px; gap: 0; margin: 0 auto; }
+    .nav-btns a { flex: 1; text-decoration: none; }
+    .btn-nav { background-color: yellow; color: black; font-size: 16px; font-weight: bold; padding: 10px 0; width: 100%; box-sizing: border-box; border: 1px solid #fff; border-radius: 0; }
+    .nav-btns a:first-child .btn-nav { border-top-left-radius: 6px; border-bottom-left-radius: 6px; }
+    .nav-btns a:last-child .btn-nav { border-top-right-radius: 6px; border-bottom-right-radius: 6px; }
+    audio { display: none; }
+    #trackTitle { font-size: 28px; font-weight: bold; margin: 30px auto; background-color: #111; color: #00ff00; display: block; width: 80%; max-width: 600px; padding: 20px; border-radius: 6px; border: 4px solid #00ff00; box-shadow: 0 0 20px #00ff00; font-family: 'Courier New', monospace; }
+  </style>
+</head>
+<body>
+
+  <h1>3 - IKEA Falkenreihe &nbsp;&gt;&gt;&nbsp; Behringer Straße</h1>
+
+  <div id="trackTitle"></div>
+
+  <div>
+    <button class="btn-ruck" onclick="prevTrack()"><strong>Rück</strong></button>
+    <button class="btn-fort" onclick="nextTrack()"><strong>Fort</strong></button>
+  </div>
+
+  <audio id="audioPlayer"></audio>
+
+  <div class="nav-buttons">
+    <div class="nav-info">
+      <div class="info-text" id="mapInfo"></div>
+      <div class="info-text" id="lineInfo"></div>
+      <div class="info-text" id="directionInfo"></div>
+    </div>
+    <div class="nav-btns">
+      <a href="wybór-mapy.html"><button class="btn-nav">MAPA</button></a>
+      <a href="neu-linie.html"><button class="btn-nav">LINIA</button></a>
+      <a href="neu-00300.html"><button class="btn-nav">KIERUNEK</button></a>
+    </div>
+  </div>
+
+  <script>
+    // Playlista utworów
+    const playlist = [
+      "omsi2/Neustedt/IKEA Falkenreihe.mp3",
+      "omsi2/Neustedt/Halskestieg.mp3",
+      "omsi2/Neustedt/Mühlenkamp.mp3",
+      "omsi2/Neustedt/Auf dem Sülzbrack.mp3",
+      "omsi2/Neustedt/Alfred-Lappan-Platz.mp3",
+      "omsi2/Neustedt/Nordzweige.mp3",
+      "omsi2/Neustedt/Bf. Neustedt.mp3",
+      "omsi2/Neustedt/Stadttheater.mp3",
+      "omsi2/Neustedt/Gardelegerstraße.mp3",
+      "omsi2/Neustedt/Berliner Markt.mp3",
+      "omsi2/Neustedt/Warnemünder Weg.mp3",
+      "omsi2/Neustedt/Glückstedter Weg.mp3",
+      "omsi2/Neustedt/Nürnberger Straße.mp3",
+      "omsi2/Neustedt/Siedlungshalle Göringen.mp3",
+      "omsi2/Neustedt/Behringer Straße.mp3"
+    ];
+
+    let currentIndex = 0;
+    const player = document.getElementById("audioPlayer");
+    const titleElement = document.getElementById("trackTitle");
+
+    function updateTitle(path) {
+      const filename = path.split("/").pop().replace(".mp3", "");
+      titleElement.textContent = filename;
+    }
+
+    function loadTrack(index) {
+      if (index >= 0 && index < playlist.length) {
+        const track = playlist[index];
+        player.src = track;
+        updateTitle(track);
+        player.play();
+      }
+    }
+
+    function prevTrack() {
+      currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentIndex);
+    }
+
+    function nextTrack() {
+      currentIndex = (currentIndex + 1) % playlist.length;
+      loadTrack(currentIndex);
+    }
+
+    loadTrack(currentIndex);
+
+    function setInfos() {
+      const pageName = window.location.pathname.split("/").pop().replace(".html", "");
+      const parts = pageName.split("-");
+      const mapName = parts[0] || "";
+      const linePart = parts[1] || "00000";
+      const directionPart = parts[2] || "0";
+
+      let lineNumber = "";
+      if (linePart.startsWith("0")) {
+        lineNumber = parseInt(linePart.substring(0, 2), 10);
+        if (lineNumber === 0) {
+          lineNumber = parseInt(linePart.substring(1, 3), 10);
+        }
+      } else {
+        lineNumber = parseInt(linePart.substring(0, 3), 10);
+      }
+
+      document.getElementById("mapInfo").textContent = mapName;
+      document.getElementById("lineInfo").textContent = lineNumber + " (" + linePart + ")";
+      document.getElementById("directionInfo").textContent = directionPart;
+    }
+
+    setInfos();
+  </script>
+</body>
+</html>
