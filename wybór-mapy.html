@@ -9,14 +9,33 @@
             margin: 0;
             height: 100vh;
             display: flex;
+            flex-direction: column; /* Ustawiamy kierunek kolumnowy */
             justify-content: center;
             align-items: center;
             background-color: black;
             color: white;
             font-family: Arial, sans-serif;
         }
+        .header {
+            color: yellow;
+            font-size: 32px;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px 0;
+            background-color: black;
+            width: 100%;
+        }
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* Odstęp między przyciskami */
+            justify-content: center;
+            width: 480px; /* Szerokość kontenera */
+            margin-top: 20px;
+        }
         a {
             text-decoration: none;
+            width: 220px; /* Szerokość przycisku */
         }
         button {
             background-color: yellow;
@@ -26,6 +45,7 @@
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s ease;
+            width: 100%; /* Przycisk zajmuje całą szerokość kontenera */
         }
         button:hover {
             background-color: darkorange;
@@ -33,17 +53,20 @@
     </style>
 </head>
 <body>
-    <a href="neu-linie.html">
-        <button>Neustedt</button>
-    </a>
-    <a href="hoh-linie.html">
-        <button>Hohenkirchen</button>
-    </a>
-    <a href="rei-linie.html">
-        <button>Reinhausen</button>
-    </a>
-    <a href="nef-linie.html">
-        <button>Neuendorf</button>
-    </a>
+    <div class="header">IBIS z Sosnowca v0.3 Alpha</div> <!-- Nagłówek na samej górze -->
+    <div class="button-container">
+        <a href="neu-linie.html">
+            <button>Neustedt</button>
+        </a>
+        <a href="hoh-linie.html">
+            <button>Hohenkirchen</button>
+        </a>
+        <a href="rei-linie.html">
+            <button>Reinhausen</button>
+        </a>
+        <a href="nef-linie.html">
+            <button>Neuendorf</button>
+        </a>
+    </div>
 </body>
 </html>
