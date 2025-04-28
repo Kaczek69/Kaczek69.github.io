@@ -17,20 +17,27 @@
     }
     .button-container {
       display: grid;
-      grid-template-columns: repeat(3, auto);
-      gap: 10px; /* odstęp między przyciskami */
+      grid-template-columns: repeat(3, 150px); /* 3 kolumny po 150px */
+      gap: 10px;
+      justify-content: center;
     }
     a {
       text-decoration: none;
+      width: 100%; /* A żeby link rozciągał się na cały przycisk */
+      display: flex;
     }
     button {
       background-color: yellow;
       border: none;
-      padding: 20px 40px;
-      font-size: 24px;
+      width: 100%; /* Pełna szerokość linka */
+      height: 100px; /* Stała wysokość */
+      font-size: 36px; /* Większe liczby = większa czcionka */
       cursor: pointer;
       border-radius: 5px;
       transition: background-color 0.3s ease;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
     button:hover {
       background-color: darkorange;
@@ -59,10 +66,10 @@
     </a>
     <a href="Hohenkirchen-10000.html">
       <button>S</button>
-      </a>
+    </a>
     <a href="Hohenkirchen-04900.html">
       <button>X49</button>
-      </a>
+    </a>
     <a href="Hohenkirchen-84900.html">
       <button>849</button>
     </a>
