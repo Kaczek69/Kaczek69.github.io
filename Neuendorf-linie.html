@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Przyciski - Maksymalnie 3 w rzędzie</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: black;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    .button-container {
+      display: grid;
+      grid-template-columns: repeat(3, auto);
+      gap: 10px; /* odstęp między przyciskami */
+    }
+    a {
+      text-decoration: none;
+    }
+    button {
+      background-color: yellow;
+      border: none;
+      padding: 20px 40px;
+      font-size: 24px;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: darkorange;
+    }
+  </style>
+</head>
+<body>
+  <div class="button-container">
+    <a href="Neustedt-30100.html">
+      <button>301</button>
+    </a>
+    <a href="Neustedt-30200.html">
+      <button>302</button>
+    </a>
+    <a href="Neustedt-30300.html">
+      <button>303</button>
+      </a>
+    <a href="Neustedt-30400.html">
+      <button>304</button>
+    </a>
+    <a href="Neustedt-31100.html">
+      <button>311</button>
+    </a>
+    <a href="Neustedt-95000.html">
+      <button>950</button>
+    </a>
+  </div>
+</body>
+</html>
