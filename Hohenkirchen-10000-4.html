@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <title>IBIS</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #000;
+      text-align: center;
+      padding: 40px;
+      color: #fff;
+      margin: 0;
+    }
+    h1 {
+      color: yellow;
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      font-family: 'Courier New', monospace;
+    }
+    button {
+      font-family: inherit;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.1s ease-in-out;
+    }
+    button:hover {
+      transform: scale(1.05);
+    }
+    .btn-ruck, .btn-fort {
+      width: 150px;
+      height: 150px;
+      font-size: 32px;
+      font-weight: bold;
+      border-radius: 16px;
+      margin: 20px;
+    }
+    .btn-ruck {
+      background-color: #aaa;
+      color: black;
+    }
+    .btn-fort {
+      background-color: #3399ff;
+      color: white;
+    }
+    .nav-buttons {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 999;
+    }
+    .nav-btns {
+      display: flex;
+      width: 100%;
+      max-width: 600px;
+      gap: 0;
+      margin: 0 auto;
+    }
+    .nav-btns a {
+      flex: 1;
+      text-decoration: none;
+    }
+    .btn-nav {
+      background-color: yellow;
+      color: black;
+      font-size: 16px;
+      font-weight: bold;
+      padding: 10px 0;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #fff;
+      border-radius: 0;
+    }
+    .nav-btns a:first-child .btn-nav {
+      border-top-left-radius: 6px;
+      border-bottom-left-radius: 6px;
+    }
+    .nav-btns a:last-child .btn-nav {
+      border-top-right-radius: 6px;
+      border-bottom-right-radius: 6px;
+    }
+    audio {
+      display: none;
+    }
+    #trackTitle {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 30px auto;
+      background-color: #111;
+      color: #00ff00;
+      display: block;
+      width: 80%;
+      max-width: 600px;
+      padding: 20px;
+      border-radius: 6px;
+      border: 4px solid #00ff00;
+      box-shadow: 0 0 20px #00ff00;
+      font-family: 'Courier New', monospace;
+    }
+    .info-container {
+      position: fixed;
+      bottom: 90px;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 40px;
+    }
+    .info-text {
+      font-size: 32px;
+      font-weight: bold;
+      color: yellow;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <h1>100 - Wangenbach, Gothastr. &nbsp;&gt;&gt;&nbsp; Treppendorf, Karl-Theodor-Str. ende</h1>
+  <div id="trackTitle"></div>
+  <div>
+    <button class="btn-ruck" onclick="prevTrack()"><strong>Rück</strong></button>
+    <button class="btn-fort" onclick="nextTrack()"><strong>Fort</strong></button>
+  </div>
+  <audio id="audioPlayer"></audio>
+
+  <div class="info-container">
+    <span class="info-text" id="mapInfo"></span>
+    <span class="info-text" id="lineInfo"></span>
+    <span class="info-text" id="directionInfo"></span>
+  </div>
+
+  <div class="nav-buttons">
+    <div class="nav-btns">
+      <a href="wybór-mapy.html"><button class="btn-nav">MAPA</button></a>
+      <a href="Hohenkirchen-10000.html"><button class="btn-nav">LINIA</button></a>
+      <a href="Hohenkirchen-10000-4.html"><button class="btn-nav">KIERUNEK</button></a>
+    </div>
+  </div>
+
+  <script>
+    // Playlista utworów
+    const playlist = [
+      "omsi2/Hohenkirchen/Wangenbach, Gothastr..mp3",
+      "omsi2/Hohenkirchen/Wangenbach, Kirchplatz.mp3",
+      "omsi2/Hohenkirchen/Wangenbach, Bahnhof.mp3",
+      "omsi2/Hohenkirchen/Wangenbach, Karawanenstr..mp3",
+      "omsi2/Hohenkirchen/Wangenbach, Kleinfelderweg.mp3",
+      "omsi2/Hohenkirchen/Niederfelden, Ort.mp3",
+      "omsi2/Hohenkirchen/Niederfelden, Abzw. Irenenhof.mp3",
+      "omsi2/Hohenkirchen/Gabelstein, Kirchplatz.mp3",
+      "omsi2/Hohenkirchen/Gabelstein, Grundschule.mp3",
+      "omsi2/Hohenkirchen/Schullandheim Wilder Habicht.mp3",
+      "omsi2/Hohenkirchen/Krahnberg.mp3",
+      "omsi2/Hohenkirchen/Treppendorf, Markt.mp3",
+      "omsi2/Hohenkirchen/Treppendorf, Karl-Theodor-Str. ende.mp3"
+    ];
+
+    let currentIndex = 0;
+    const player = document.getElementById("audioPlayer");
+    const titleElement = document.getElementById("trackTitle");
+
+    function updateTitle(path) {
+      const filename = path.split("/").pop().replace(".mp3", "");
+      titleElement.textContent = filename;
+    }
+
+    function loadTrack(index) {
+      if (index >= 0 && index < playlist.length) {
+        const track = playlist[index];
+        player.src = track;
+        updateTitle(track);
+        player.play();
+      }
+    }
+
+    function prevTrack() {
+      currentIndex = (currentIndex - 1 + playlist.length) % playlist.length;
+      loadTrack(currentIndex);
+    }
+
+    function nextTrack() {
+      currentIndex = (currentIndex + 1) % playlist.length;
+      loadTrack(currentIndex);
+    }
+
+    loadTrack(currentIndex);
+
+    function setInfos() {
+      const pageName = window.location.pathname.split("/").pop().replace(".html", "");
+      const parts = pageName.split("-");
+      const mapName = parts[0] || "";
+      const linePart = parts[1] || "00000";
+      const directionPart = parts[2] || "0";
+
+      document.getElementById("mapInfo").textContent = mapName;
+      document.getElementById("lineInfo").textContent = linePart;
+      document.getElementById("directionInfo").textContent = directionPart;
+
+      // Poprawione generowanie linków:
+      const mapaLinia = `${mapName}-linie.html`;  // zawsze "-linie"
+      const mapaKierunek = `${mapName}-${linePart}.html`;  // mapa + linia
+
+      const liniaLink = document.querySelector('a[href="Hohenkirchen-10000.html"]');
+      if (liniaLink) {
+        liniaLink.href = mapaLinia;
+      }
+      const kierunekLink = document.querySelector('a[href="Hohenkirchen-10000-4.html"]');
+      if (kierunekLink) {
+        kierunekLink.href = mapaKierunek;
+      }
+    }
+
+    setInfos();
+  </script>
+</body>
+</html>
+    
