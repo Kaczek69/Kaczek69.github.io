@@ -77,8 +77,8 @@
 
   <div class="link-container">
     <p>Pobierz wymagany program na PC (portable):</p>
-    <a href="https://Kaczek69.github.io/ALC/alc.exe" class="download-link" download>Pobierz ALC AMD_64, i386</a>
-    <a href="https://Kaczek69.github.io/ALC/ALC.apk." class="download-link" download>Pobierz ALC APK</a>
+    <a href="javascript:void(0);" onclick="downloadFiles()" class="download-link">Pobierz ALC AMD_64, i386</a>
+    <a href="https://Kaczek69.github.io/ALC/ALC.apk" class="download-link" download>Pobierz ALC APK</a>
   </div>
 
   <script>
@@ -86,6 +86,24 @@
     function navigateToIP() {
       var ip = document.getElementById('ip_address').value + ":6969";  // Uzupełniamy port
       window.location.href = "http://" + ip;  // Przechodzimy pod adres
+    }
+
+    // Funkcja do pobierania dwóch plików na raz
+    function downloadFiles() {
+      const links = [
+        "https://Kaczek69.github.io/ALC/alc.7z.001",
+        "https://Kaczek69.github.io/ALC/alc.7z.002",
+        "https://Kaczek69.github.io/ALC/alc.7z.003",
+        "https://Kaczek69.github.io/ALC/alc.7z.004"
+      ];
+      links.forEach(link => {
+        const a = document.createElement('a');
+        a.href = link;
+        a.download = link.split('/').pop(); // Pobiera nazwę pliku z URL
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      });
     }
   </script>
 
