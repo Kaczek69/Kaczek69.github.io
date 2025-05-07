@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel Multimedialny LAN</title>
+  <style>
+    body {
+      background-color: #121212;
+      color: white;
+      font-family: 'Arial', sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #ff6f00; /* Pomarańczowy */
+    }
+
+    input[type="text"] {
+      background-color: #333;
+      color: white;
+      padding: 15px;
+      border-radius: 5px;
+      border: 2px solid #ff6f00;
+      font-size: 1.5em;
+      width: 80%;
+      margin-top: 20px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #ff8f33;
+    }
+
+    button {
+      background-color: #ff6f00;
+      border: none;
+      color: white;
+      font-size: 1.5em;
+      padding: 15px 30px;
+      border-radius: 10px;
+      width: 250px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ff8f33;
+    }
+
+    .link-container {
+      margin-top: 30px;
+      font-size: 1.2em;
+    }
+
+    .download-link {
+      color: #ff6f00;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .download-link:hover {
+      color: #ff8f33;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🎧LAN audio control🎧</h1>
+
+  <p>Wprowadź adres IP, aby przejść do panelu sterowania muzyką:</p>
+  <input type="text" id="ip_address" value="192.168." placeholder="Wpisz IPv4" />
+  <button onclick="navigateToIP()">Przejdź pod adres (LAN)</button>
+
+  <div class="link-container">
+    <p>Pobierz wymagany program na PC (portable):</p>
+    <a href="https://Kaczek69.github.io/ALC/alc.exe" class="download-link" download>Pobierz ALC AMD_64, i386</a>
+  </div>
+
+  <script>
+    // Funkcja przechodzenia pod adres IP
+    function navigateToIP() {
+      var ip = document.getElementById('ip_address').value + ":6969";  // Uzupełniamy port
+      window.location.href = "http://" + ip;  // Przechodzimy pod adres
+    }
+  </script>
+
+</body>
+</html>
