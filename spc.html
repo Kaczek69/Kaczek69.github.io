@@ -3,104 +3,182 @@
 <head>
   <meta charset="UTF-8">
   <title>Szkoła Specjalna w Ciężkowicach</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
-      background: linear-gradient(45deg, #0000cc, #00ccff);
-      color: #ffff00;
-      font-family: 'Comic Sans MS', cursive, sans-serif;
       margin: 0;
       padding: 0;
+      background: linear-gradient(to bottom, #ff00ff, #00ffff);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      color: #00ff00;
+      text-shadow: 1px 1px #000;
+      background-attachment: fixed;
+      overflow-x: hidden;
     }
+
     header {
-      background-color: #ff00ff;
-      color: white;
+      background: url('https://media.tenor.com/0AVrK4P9b34AAAAC/80s-90s.gif') repeat;
       text-align: center;
-      padding: 20px;
-      text-shadow: 2px 2px #000;
-      border-bottom: 5px double yellow;
+      padding: 30px 10px;
+      border-bottom: 5px groove yellow;
     }
-    nav {
-      background-color: #00ff00;
-      padding: 10px;
-      text-align: center;
-      font-weight: bold;
-    }
-    nav a {
-      color: black;
-      text-decoration: none;
-      margin: 0 15px;
-      font-size: 18px;
-      background-color: yellow;
-      padding: 5px 10px;
-      border: 2px solid red;
-    }
-    nav a:hover {
-      background-color: red;
-      color: white;
-      border: 2px dashed yellow;
-    }
-    .content {
-      padding: 20px;
-      background-color: #000080;
-      color: #ffffff;
-    }
-    h1, h2 {
-      text-align: center;
-      text-transform: uppercase;
-      text-shadow: 1px 1px #ff0000;
-    }
-    .blink {
+
+    header h1 {
+      font-size: 28px;
+      color: #ffff00;
       animation: blink 1s infinite;
     }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 15px;
+      background: #0000cc;
+    }
+
+    nav a {
+      background: linear-gradient(45deg, yellow, red);
+      color: black;
+      padding: 15px;
+      text-align: center;
+      text-decoration: none;
+      border: 3px dashed lime;
+      font-size: 20px;
+    }
+
+    nav a:hover {
+      background: black;
+      color: white;
+      border: 3px solid cyan;
+    }
+
+    .section {
+      padding: 30px 15px;
+      background: rgba(0,0,0,0.5);
+      margin: 10px;
+      border: 4px dotted magenta;
+    }
+
+    h2 {
+      font-size: 26px;
+      color: cyan;
+      text-align: center;
+    }
+
+    .marquee {
+      background: yellow;
+      color: red;
+      font-weight: bold;
+      padding: 10px;
+      font-size: 20px;
+      border: 4px double red;
+    }
+
+    .marquee-text {
+      animation: scroll-left 10s linear infinite;
+      white-space: nowrap;
+      overflow: hidden;
+      display: block;
+    }
+
+    @keyframes scroll-left {
+      0% { transform: translateX(100%); }
+      100% { transform: translateX(-100%); }
+    }
+
     @keyframes blink {
       0%, 50%, 100% { opacity: 1; }
       25%, 75% { opacity: 0; }
     }
+
     footer {
-      background-color: #333;
-      color: #ccc;
+      background-color: black;
+      color: lime;
       text-align: center;
-      padding: 10px;
-      font-size: 12px;
-      border-top: 3px dotted lime;
+      padding: 20px;
+      font-size: 14px;
+      border-top: 5px dashed pink;
+    }
+
+    img.full-width {
+      width: 100%;
+      border: 5px groove #ff00ff;
+      margin: 10px 0;
+    }
+
+    .gif-bomb {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .gif-bomb img {
+      width: 100px;
+      height: 100px;
+      border: 2px solid white;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <h1 class="blink">💾 Szkoła Specjalna w Ciężkowicach 💾</h1>
-  <p>Witamy na oficjalnej stronie naszej wyjątkowej szkoły!</p>
+  <h1>🚨💾 WITAJ NA STRONIE SZKOŁY SPECJALNEJ W CIĘŻKOWICACH 💾🚨</h1>
 </header>
 
+<div class="marquee">
+  <span class="marquee-text">🎉 Uwaga! Nowy rok szkolny już trwa! 🚌 Zapisz się TERAZ! 📞 666-RETRO-420 🎉</span>
+</div>
+
 <nav>
-  <a href="#">Strona Główna</a>
-  <a href="#">O Nas</a>
-  <a href="#">Zajęcia</a>
-  <a href="#">Galeria</a>
-  <a href="#">Kontakt</a>
+  <a href="#">🏠 Strona Główna</a>
+  <a href="#">👩‍🏫 Kadra</a>
+  <a href="#">📸 Galeria</a>
+  <a href="#">📅 Wydarzenia</a>
+  <a href="#">✉️ Kontakt</a>
 </nav>
 
-<div class="content">
-  <h2>🌟 Nasza Misja</h2>
+<div class="section">
+  <h2>🌈 O NAS</h2>
   <p>
-    Szkoła Specjalna w Ciężkowicach to miejsce, gdzie każdy uczeń jest wyjątkowy.
-    Zapewniamy wsparcie, rozwój i edukację dostosowaną do indywidualnych potrzeb.
+    Jesteśmy najbarwniejszą szkołą specjalną w regionie! U nas nie ma nudy – tylko dyskoteki, informatyka na Windows 98 i edukacja w stylu turbo! 🤖
   </p>
+  <img src="https://i.imgur.com/VdFgbNb.gif" class="full-width" alt="GIF szkoły">
+</div>
 
-  <h2>🖼️ Galeria Wspomnień</h2>
-  <p>Wkrótce znajdziesz tutaj nasze retro zdjęcia z dyskotek, wycieczek i klasowych przygód!</p>
+<div class="section">
+  <h2>🖼️ GALERIA OBŁĘDU</h2>
+  <div class="gif-bomb">
+    <img src="https://i.imgur.com/EQ9Zz6N.gif" alt="GIF1">
+    <img src="https://i.imgur.com/AcmjQZK.gif" alt="GIF2">
+    <img src="https://i.imgur.com/Kz5uwvD.gif" alt="GIF3">
+    <img src="https://i.imgur.com/B0YgEtJ.gif" alt="GIF4">
+  </div>
+</div>
 
-  <h2>📅 Nadchodzące wydarzenia</h2>
+<div class="section">
+  <h2>📅 NAJBLIŻSZE WYDARZENIA</h2>
   <ul>
-    <li>3 czerwca – Dzień Dziecka Retro Party 🎉</li>
-    <li>15 czerwca – Piknik rodzinny z muzyką z Winampa 🎶</li>
-    <li>30 czerwca – Zakończenie roku z pokazem slajdów w PowerPoint 97 📽️</li>
+    <li>🔥 1 czerwca – Festyn Retro z DJ Windows95</li>
+    <li>📺 15 czerwca – Pokaz prezentacji w PowerPoint 2000</li>
+    <li>🎮 30 czerwca – Zawody LAN w Quake III Arena</li>
   </ul>
 </div>
 
+<div class="section">
+  <h2>📞 KONTAKT</h2>
+  <p>
+    Szkoła Specjalna w Ciężkowicach<br>
+    ul. Turbo 420<br>
+    33-190 Ciężkowice<br><br>
+    📱 Telefon: 123 456 789<br>
+    📧 E-mail: szkola@retro.edu.pl
+  </p>
+</div>
+
 <footer>
-  &copy; 2025 Szkoła Specjalna w Ciężkowicach | Design: RetroTurbo™ | ICQ: 123456789
+  © 1999–2025 Szkoła Specjalna w Ciężkowicach™ | Projekt: CiężkoWebz Design | Najlepiej na Nokia 7650 📵
 </footer>
 
 </body>
