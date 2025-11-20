@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ciemny Motyw - Wyśrodkowany Tekst</title>
+    <style>
+        /* Styl CSS dla ciemnego motywu */
+        body {
+            background-color: #121212; /* Bardzo ciemne tło */
+            color: #e0e0e0; /* Jasny tekst dla kontrastu */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Wyśrodkowanie ogólnej zawartości na stronie */
+            min-height: 100vh;
+        }
+
+        /* Styl dla nagłówka */
+        h1 {
+            text-align: center; /* Wyśrodkowanie tytułu */
+            font-weight: bold;
+            color: #bb86fc;
+            margin-bottom: 30px;
+        }
+
+        /* Styl dla kontenera tekstowego */
+        .content-box {
+            background-color: #1f1f1f;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 100%;
+            /* NOWA ZMIANA: Wyśrodkowanie tekstu w kontenerze */
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Styl dla akapitów wewnątrz kontenera */
+        .content-box p {
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <h1>**Mój Wyśrodkowany, Pogrubiony Tytuł**</h1>
+
+    <div class="content-box">
+        <h2>Miejsce na Wyśrodkowany Tekst</h2>
+        <p>Ten tekst oraz wszystkie inne elementy w tym kontenerze są teraz **wyśrodkowane** dzięki dodaniu właściwości `text-align: center;` w klasie `.content-box`.</p>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. To jest tekst demonstracyjny, który pokazuje, jak wygląda wyśrodkowanie dłuższych akapitów.</p>
+    </div>
+
+</body>
+</html>
