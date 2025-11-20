@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ciemny Motyw - Wyśrodkowany Tekst</title>
+    <title>Ciemny Motyw - Wyśrodkowany Tekst Jak Wiersz</title>
     <style>
         /* Styl CSS dla ciemnego motywu */
         body {
@@ -34,15 +34,16 @@
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
             max-width: 800px;
             width: 100%;
-            /* NOWA ZMIANA: Wyśrodkowanie tekstu w kontenerze */
-            text-align: center;
             line-height: 1.6;
+            /* Usunięto text-align: center; aby tekst w bloku nie był wyśrodkowany linia po linii. 
+               Jeśli chcesz, by każda linia wiersza była wyśrodkowana, dodaj z powrotem: text-align: center; */
         }
 
-        /* Styl dla akapitów wewnątrz kontenera */
-        .content-box p {
-            margin-top: 0;
-            margin-bottom: 15px;
+        /* NOWY STYL: Użycie <pre> lub zawijanie wiersza */
+        .poem {
+            margin: 0;
+            white-space: pre-line; /* Zachowuje złamania linii i zawija długie linie */
+            /* Możesz użyć 'white-space: pre;' jeśli nie chcesz automatycznego zawijania długich linii */
         }
     </style>
 </head>
@@ -50,23 +51,25 @@
     <h1>Oda do Dawida</h1>
 
     <div class="content-box">
-        <p>Dawidzie drogi,
-Rozłóż przede mną swe łyse nogi,
-Twe owłosione kule jak dziesiątka różańca,
-Wzdrygną mnie do tańca, tańca ruchania,
-
-Wyciągnij predatora to ci skoczę na pindola,
-Rozwieję twe wszelakie smutki od główki aż po same stópki,
-Orzech twój jak mandarynka, słodki aż cieknie mi ślinka
-2 suty jak 2 kokosy, których nigdy nie mam dosyć,
-
-I tak nas zaprowadzisz na swych jajec łono,
-Tymczasem przenoś mojem dupę obspermioną,
-Do tych goonerów leśnych, do tych stop spoconych,
-Spermą sowicie twoją okraszonych,
-
-Dałeś mi swą pałę, wziąłem raz po raz,
-Do gardła po kule aż Peugeot zgasł.</p>
+        <div class="poem">
+            Dawidzie drogi,<br>
+            Rozłóż przede mną swe łyse nogi,<br>
+            Twe owłosione kule jak dziesiątka różańca,<br>
+            Wzdrygną mnie do tańca, tańca ruchania,<br>
+            <br>
+            Wyciągnij predatora to ci skoczę na pindola,<br>
+            Rozwieję twe wszelakie smutki od główki aż po same stópki,<br>
+            Orzech twój jak mandarynka, słodki aż cieknie mi ślinka<br>
+            2 suty jak 2 kokosy, których nigdy nie mam dosyć,<br>
+            <br>
+            I tak nas zaprowadzisz na swych jajec łono,<br>
+            Tymczasem przenoś mojem dupę obspermioną,<br>
+            Do tych goonerów leśnych, do tych stop spoconych,<br>
+            Spermą sowicie twoją okraszonych,<br>
+            <br>
+            Dałeś mi swą pałę, wziąłem raz po raz,<br>
+            Do gardła po kule aż Peugeot zgasł.
+        </div>
     </div>
 
 </body>
