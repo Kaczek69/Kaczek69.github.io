@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>ULTRA MANTOU CHAOS</title>
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: "Impact", sans-serif;
+        }
+
+        #go-button {
+            padding: 30px 60px;
+            font-size: 50px;
+            color: #fff;
+            background: #f00;
+            border: 10px double #fff;
+            cursor: pointer;
+            z-index: 999;
+            box-shadow: 0 0 20px #fff;
+        }
+
+        #go-button:hover {
+            transform: scale(1.1);
+            background: #ff00ff;
+        }
+
+        #stage {
+            display: none;
+            width: 100vw;
+            height: 100vh;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px; /* Możesz zmienić wielkość obrazka tutaj */
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        /* Klasa dodawana przez JS po kliknięciu */
+        .ultimate-chaos {
+            animation: 
+                spin 0.4s linear infinite, 
+                pump 0.2s ease-in-out infinite alternate,
+                filters 0.1s linear infinite;
+        }
+
+        /* Obroty */
+        @keyframes spin {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* Pulsowanie (zoom) */
+        @keyframes pump {
+            from { width: 300px; }
+            to { width: 600px; }
+        }
+
+        /* Chamskie efekty kolorystyczne */
+        @keyframes filters {
+            0% { filter: hue-rotate(0deg) invert(0%) sepia(0%); }
+            25% { filter: hue-rotate(90deg) invert(50%) sepia(100%); }
+            50% { filter: hue-rotate(180deg) invert(100%) saturate(500%); }
+            75% { filter: hue-rotate(270deg) contrast(300%); }
+            100% { filter: hue-rotate(360deg) invert(0%); }
+        }
+
+        /* Trzęsienie całym ekranem */
+        .screen-shake {
+            animation: shake 0.05s infinite;
+        }
+
+        @keyframes shake {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            50% { transform: translate(-3px, -2px) rotate(1deg); }
+            100% { transform: translate(1px, 2px) rotate(-1deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <button id="go-button">GO!</button>
+
+    <div id="stage">
+        <img src="eee.png" id="image" alt="chaos">
+    </div>
+
+    <audio id="audio" src="eee.mp3" loop></audio>
+
+    <script>
+        const btn = document.getElementById('go-button');
+        const stage = document.getElementById('stage');
+        const img = document.getElementById('image');
+        const audio = document.getElementById('audio');
+
+        btn.addEventListener('click', () => {
+            btn.style.display = 'none';
+            stage.style.display = 'block';
+            
+            // Start muzyki
+            audio.play();
+
+            // Odpalenie animacji
+            img.classList.add('ultimate-chaos');
+            document.body.classList.add('screen-shake');
+
+            // Stroboskop tła
+            setInterval(() => {
+                const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffffff'];
+                document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            }, 50);
+        });
+    </script>
+</body>
+</html>
