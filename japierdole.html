@@ -2,7 +2,7 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>WINDOWS XP - LEGIT TOTALNY</title>
+    <title>WINDOWS XP - INFINITE CHAOS</title>
     <style>
         body, html {
             margin: 0; padding: 0;
@@ -12,7 +12,7 @@
             overflow: hidden;
         }
 
-        /* --- BOOT SEQUENCE --- */
+        /* --- BOOT --- */
         #boot {
             background: #000; color: #fff;
             font-family: monospace; padding: 20px;
@@ -30,28 +30,19 @@
             z-index: 1;
         }
 
-        /* --- IKONKA (NA WIERZCHU) --- */
+        /* --- IKONA --- */
         #icon-exe {
-            width: 80px;
-            position: absolute;
-            top: 50px; left: 50px;
-            text-align: center;
-            cursor: pointer;
-            user-select: none;
-            z-index: 20000; /* NA SAMEJ GÓRZE */
+            width: 80px; position: absolute; top: 50px; left: 50px;
+            text-align: center; cursor: pointer; user-select: none; z-index: 20000;
         }
         #icon-exe img { width: 50px; display: block; margin: 0 auto; pointer-events: none; }
         #icon-exe span { color: white; background: rgba(0,0,80,0.6); font-size: 12px; padding: 2px; }
 
-        /* --- OKNA (TEŻ NA WIERZCHU) --- */
+        /* --- OKNA --- */
         .window {
-            position: absolute;
-            background: #ece9d8;
-            border: 3px solid #0054e3;
+            position: absolute; background: #ece9d8; border: 3px solid #0054e3;
             border-top-left-radius: 8px; border-top-right-radius: 8px;
-            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
-            display: none;
-            z-index: 15000;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.5); display: none; z-index: 15000;
         }
         .win-title {
             background: linear-gradient(to right, #0054e3, #27c1ff);
@@ -62,40 +53,31 @@
         #player-win { top: 20%; left: 30%; width: 400px; }
         #terminal-win { bottom: 50px; left: 50px; width: 450px; background: #000; border: 2px solid #ccc; }
 
-        /* --- CHAOS (POD IKONAMI) --- */
+        /* --- CHAOS (WARSTWA POD) --- */
         #chaos-overlay {
-            display: none; 
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%; 
-            z-index: 500; /* POD IKONĄ I OKNAMI */
-            pointer-events: none;
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; z-index: 500; pointer-events: none;
         }
-        #spinning-img { 
-            position: absolute; top: 50%; left: 50%; 
-            width: 400px; transform: translate(-50%, -50%); 
-        }
+        #spinning-img { position: absolute; top: 50%; left: 50%; width: 400px; transform: translate(-50%, -50%); }
 
         .active-spin { animation: spin 0.1s linear infinite; }
         @keyframes spin { 
-            0% { transform: translate(-50%, -50%) rotate(0deg) scale(2.5); filter: hue-rotate(0deg) invert(0%); }
+            0% { transform: translate(-50%, -50%) rotate(0deg) scale(2.5); filter: hue-rotate(0deg); }
             100% { transform: translate(-50%, -50%) rotate(360deg) scale(5); filter: hue-rotate(360deg) invert(100%); }
         }
         
         .shake { animation: shake 0.05s infinite; }
-        @keyframes shake { 
-            0% { transform: translate(5px,5px); } 
-            50% { transform: translate(-8px,-5px); } 
-            100% { transform: translate(5px,5px); } 
-        }
+        @keyframes shake { 0% { transform: translate(5px,5px); } 50% { transform: translate(-8px,-5px); } 100% { transform: translate(5px,5px); } }
 
-        /* --- FINAL BLACK SCREEN --- */
+        /* --- BIOS ERROR & REBOOT --- */
         #bios-error {
-            display: none;
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: black; color: white;
-            font-family: monospace; padding: 40px;
-            z-index: 100000; /* TOTALNIE NA WIERZCHU NA KONIEC */
+            display: none; position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%; background: black; color: white;
+            font-family: monospace; padding: 40px; z-index: 100000;
+        }
+        #reboot-input {
+            background: transparent; border: none; color: white;
+            font-family: monospace; font-size: 18px; outline: none; width: 300px;
         }
     </style>
 </head>
@@ -133,7 +115,9 @@
         <p>Found CDROM, trying to boot from it... Fail</p>
         <br>
         <p style="font-weight: bold; font-size: 22px; color: red;">DISK BOOT FAILURE, INSERT SYSTEM DISK AND PRESS ENTER</p>
-        <span id="cursor">_</span>
+        <br>
+        <p>Wpisz komendę, aby spróbować ponownie:</p>
+        <span>> </span><input type="text" id="reboot-input" autofocus>
     </div>
 
     <audio id="audio" src="eee.mp3" loop></audio>
@@ -141,7 +125,7 @@
     <script>
         // --- BOOT ---
         const boot = document.getElementById('boot');
-        const bootLines = ["Memory Test: 128MB OK", "CPU: AMD Athlon(tm) 64 Processor 3000+", "IDE Channel 0 Master: Disk 80GB", "Verifying DMI Pool Data...", "Booting Windows XP..."];
+        const bootLines = ["Memory Test: 128MB OK", "Detecting IDE Channel Master... DONE", "Loading Windows XP..."];
         let bIdx = 0;
         function runBoot() {
             if (bIdx < bootLines.length) { boot.innerHTML += bootLines[bIdx++] + "<br>"; setTimeout(runBoot, 300); }
@@ -149,52 +133,27 @@
         }
         runBoot();
 
-        // --- DRAG SYSTEM ---
+        // --- DRAG ---
         const icon = document.getElementById('icon-exe');
         let isDragging = false, offset = { x: 0, y: 0 };
-
-        icon.addEventListener('mousedown', (e) => {
-            isDragging = true;
-            offset.x = e.clientX - icon.offsetLeft;
-            offset.y = e.clientY - icon.offsetTop;
-        });
-
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            icon.style.left = (e.clientX - offset.x) + 'px';
-            icon.style.top = (e.clientY - offset.y) + 'px';
-        });
-
+        icon.addEventListener('mousedown', (e) => { isDragging = true; offset.x = e.clientX - icon.offsetLeft; offset.y = e.clientY - icon.offsetTop; });
+        document.addEventListener('mousemove', (e) => { if (isDragging) { icon.style.left = (e.clientX - offset.x) + 'px'; icon.style.top = (e.clientY - offset.y) + 'px'; } });
         document.addEventListener('mouseup', () => { isDragging = false; });
 
-        // --- START ZADYMY ---
+        // --- START ---
         icon.ondblclick = () => {
             document.getElementById('player-win').style.display = 'block';
             document.getElementById('audio').play();
-            setTimeout(() => {
-                document.getElementById('terminal-win').style.display = 'block';
-                startKys();
-            }, 2000);
+            setTimeout(() => { document.getElementById('terminal-win').style.display = 'block'; startKys(); }, 2000);
         };
 
         function startKys() {
             const term = document.getElementById('term-body');
-            const script = [
-                "C:\\> echo OFF",
-                "C:\\> del C:\\WINDOWS\\system32\\*.* /q",
-                "Deleting System32... DONE",
-                "C:\\> format C: /autotest",
-                "FATAL ERROR: Disk corrupted.",
-                "C:\\> KYS.exe --force"
-            ];
+            const script = ["C:\\> echo OFF", "C:\\> del C:\\WINDOWS\\system32\\*.* /q", "Deleting System32... DONE", "C:\\> format C: /autotest", "C:\\> KYS.exe --force"];
             let sIdx = 0;
             const t = setInterval(() => {
-                if (sIdx < script.length) {
-                    term.innerHTML += script[sIdx++] + "<br>";
-                } else {
-                    clearInterval(t);
-                    setTimeout(executeChaos, 500);
-                }
+                if (sIdx < script.length) term.innerHTML += script[sIdx++] + "<br>";
+                else { clearInterval(t); setTimeout(executeChaos, 500); }
             }, 500);
         }
 
@@ -202,22 +161,28 @@
             document.getElementById('chaos-overlay').style.display = 'block';
             document.getElementById('spinning-img').classList.add('active-spin');
             document.body.classList.add('shake');
-            
-            const strobo = setInterval(() => {
-                document.body.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16);
-            }, 40);
+            const strobo = setInterval(() => { document.body.style.backgroundColor = '#' + Math.floor(Math.random()*16777215).toString(16); }, 40);
 
             setTimeout(() => {
                 clearInterval(strobo);
                 document.body.classList.remove('shake');
                 document.getElementById('bios-error').style.display = 'block';
                 document.getElementById('audio').pause();
-                setInterval(() => {
-                    const c = document.getElementById('cursor');
-                    c.style.opacity = c.style.opacity == "0" ? "1" : "0";
-                }, 500);
-            }, 7000); // 7 sekund rzeźni
+                document.getElementById('reboot-input').focus();
+            }, 7000);
         }
+
+        // --- REBOOT LOGIC ---
+        document.getElementById('reboot-input').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (this.value.trim() === 'sudo reboot') {
+                    location.reload();
+                } else {
+                    this.value = '';
+                    alert('Invalid command! Try sudo reboot');
+                }
+            }
+        });
     </script>
 </body>
 </html>
